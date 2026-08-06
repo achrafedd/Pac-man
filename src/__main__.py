@@ -1,12 +1,15 @@
-from mazegenerator import MazeGenerator
+import arcade
+
+from .GameView import GameView
+from .Maze import Maze
 
 
 def main() -> None:
-    size = (42, 42)
-    maze = MazeGenerator(size, False)
-    maze.generate(42)
-    grids = maze.maze
-    print(grids)
+    maze = Maze(15, 15, 42)
+    window = arcade.Window(fullscreen=True)
+    game_view = GameView(maze)
+    window.show_view(game_view)
+    arcade.run()
 
 
 if __name__ == "__main__":

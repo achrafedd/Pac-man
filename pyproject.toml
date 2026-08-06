@@ -5,9 +5,48 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "arcade>=3.3.3",
     "mazegenerator",
     "pyclean>=3.7.0",
 ]
 
 [tool.uv.sources]
-mazegenerator = { path = "mazegenerator-00001-py3-none-any.whl" }
+mazegenerator = { path = "mazegenerator-2.0.2-py3-none-any.whl" }
+
+[tool.ruff]
+line-length = 79
+target-version = "py310"
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Select Flake8 rules (E, W, F, C90) and popular Flake8 plugins (N, B, A, C4, I)
+select = [
+    "E",    # pycodestyle errors (Flake8 core)
+    "W",    # pycodestyle warnings (Flake8 core)
+    "F",    # Pyflakes (Flake8 core)
+    "C90",  # mccabe complexity (Flake8 core)
+    "I",    # isort import sorting
+    "N",    # pep8-naming (flake8-naming)
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "C4",   # flake8-comprehensions
+]
+
+ignore = []
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
