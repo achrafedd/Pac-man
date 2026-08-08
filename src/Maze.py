@@ -14,34 +14,35 @@ class Maze:
         maze = MazeGenerator((self.width, self.height), False)
         maze.generate(self.seed)
         self.maze = maze.maze
-        print(self.maze)
 
-    def draw(self, window_width: int, window_height: int) -> None:
-        wall_width = abs((window_width - 200) / len(self.maze[0]))
-        wall_height = abs((window_height - 100) / len(self.maze))
+    def draw(self, window_width: float, window_height: float) -> None:
+        m = window_height - 100
+        size = m / self.height
+        width_gap = (window_width - size * self.width) // 2
+        height_gap = (window_height - size * self.height) // 2
         anc = arcade.Vec2()
 
-        x, y = 100, window_height - 50
-        for _ in range(len(self.maze[0])):
-            wide_rect = arcade.XYWH(x, y, wall_width, 2, anc)
-            arcade.draw_rect_filled(wide_rect, arcade.color.BLUE)
-            x += wall_width
+        x, y = width_gap, window_height - height_gap - 50
+        for _ in range(self.width):
+            wall = arcade.XYWH(x, y, size, 5, anc)
+            arcade.draw_rect_filled(wall, arcade.color.BLUE)
+            x += size
 
-        y = window_height - (50 + wall_height)
+        y = window_height - (height_gap + size) + 5 - 50
         for row in self.maze:
-            x = 100
-            wide_rect = arcade.XYWH(x, y, 2, wall_height, anc)
-            arcade.draw_rect_filled(wide_rect, arcade.color.BLUE)
-            x += wall_width
-            for cell in row:
-                if cell >> 1 & 1:
-                    wide_rect = arcade.XYWH(x, y, 2, wall_height, anc)
-                    arcade.draw_rect_filled(wide_rect, arcade.color.BLUE)
-                x += wall_width
-            y -= wall_height
-            x = 100
-            for cell in row:
-                if cell >> 2 & 1:
-                    wide_rect = arcade.XYWH(x, y, wall_width, 2, anc)
-                    arcade.draw_rect_filled(wide_rect, arcade.color.BLUE)
-                x += wall_width
+            x = width_gap - 5
+            wall = arcade.XYWH(x, y, 5, size, anc)
+            arcade.draw_rect_filled(wall, arcade.color.BLUE)
+            x += size + 5
+            for col in row:
+                if col >> 1 & 1:
+                    wall = arcade.XYWH(x, y, 5, size, anc)
+                    arcade.draw_rect_filled(wall, arcade.color.BLUE)
+                x += size
+            x = width_gap
+            for col in row:
+                if col >> 2 & 1:
+                    wall = arcade.XYWH(x, y, size, 5, anc)
+                    arcade.draw_rect_filled(wall, arcade.color.BLUE)
+                x += size
+            y -= size
