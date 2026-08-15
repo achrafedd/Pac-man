@@ -46,3 +46,6 @@ class Maze:
                     arcade.draw_rect_filled(wall, arcade.color.BLUE)
                 x += size
             y -= size
+        for row in self.maze:
+            for col in row:
+                arcade.draw_point(x, y, arcade.color.YELLOW, 5.0)

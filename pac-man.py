@@ -1,6 +1,6 @@
 import arcade
 
-from GameView import GameView
+from GameView import Main_Menu
 from Maze import Maze
 from parser import check_config_values, take_arges, check_file, parse_json
 
@@ -12,14 +12,16 @@ def main() -> None:
     config = check_config_values(config)
 
     maze = Maze(config["width"], config["height"], config["seed"])
+    # window._update_rate = 1000
     window = arcade.Window(fullscreen=True)
-    game_view = GameView(maze)
-    window.show_view(game_view)
+    menu = Main_Menu(maze, window)
+    window.show_view(menu)
     arcade.run()
 
 
 if __name__ == "__main__":
+    main()
     try:
-        main()
+        pass
     except Exception as e:
         print(f"Error: {e}")
