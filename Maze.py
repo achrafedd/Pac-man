@@ -16,8 +16,8 @@ class Maze:
         self.maze = maze.maze
 
     def draw(self, window_width: float, window_height: float) -> None:
-        m = window_height - 100
-        size = m / self.height
+        size: int = min(window_width // len(self.maze),
+                        window_height // len(self.maze[0]))
         width_gap = (window_width - size * self.width) // 2
         height_gap = (window_height - size * self.height) // 2
         anc = arcade.Vec2()

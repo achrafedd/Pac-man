@@ -1,6 +1,7 @@
 import arcade
 
 from Maze import Maze
+from Player import Player
 
 
 class GameView(arcade.View):
@@ -8,6 +9,7 @@ class GameView(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.TRANSPARENT_BLACK)
         self.maze: Maze = maze
+        self.player: Player = Player((960, 540), size=30)
 
     def on_draw(self) -> None:
         self.clear()
@@ -15,6 +17,7 @@ class GameView(arcade.View):
         banner = arcade.XYWH(0, self.height - 75, self.width, 75, anc)
         arcade.draw_rect_filled(banner, arcade.color.BLUE_BELL)
         self.maze.draw(self.width, self.height)
+        self.player.draw()
 
     def on_update(self, delta_time: float) -> None:
         pass
@@ -22,6 +25,15 @@ class GameView(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
             exit(0)
+        # Controle directions of player
+        if symbol == arcade.key.UP:
+            self.player.direction = 'up'
+        if symbol == arcade.key.RIGHT:
+            self.player.direction = 'right'
+        if symbol == arcade.key.DOWN:
+            self.player.direction = 'down'
+        if symbol == arcade.key.LEFT:
+            self.player.direction = 'left'
 
 
 class Main_Menu(arcade.View):
