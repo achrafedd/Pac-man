@@ -1,51 +1,63 @@
+from enum import Enum
+
 import arcade
 from mazegenerator import MazeGenerator
 
 
+class Direction(Enum):
+    NORTH = 1
+    EAST = 2
+    SOUTH = 4
+    WEST = 8
+
+
 class Maze:
-    def __init__(self, width: int, height: int, seed: int) -> None:
+    def __init__(self, width: int,
+                 height: int,
+                 seed: int,
+                 window_width: int,
+                 window_height: int) -> None:
         self.maze: list[list[int]] = []
         self.width: int = width
         self.height: int = height
         self.seed: int = seed
+        self.cx: int = window_width // 2
+        self.cy: int = window_height // 2
         self.init_maze()
+        self.size: float = min(
+                        window_width // len(self.maze),
+                        window_height // len(self.maze[0]))
 
     def init_maze(self) -> None:
         maze = MazeGenerator((self.width, self.height), False)
         maze.generate(self.seed)
         self.maze = maze.maze
 
+    @staticmethod
+    def is_open(cell_value: int, direction: Direction) -> bool:
+        return cell_value & direction.value != 0
+
+    def grid_to_pixel(self, col, row, tile_size) -> tuple[int, int]:
+        margin_x = tile_size * (len(self.maze[0]) // 2)
+        margin_y = tile_size * (len(self.maze) // 2)
+        x = self.cx + col * tile_size - margin_x
+        y = self.cy - row * tile_size + margin_y
+        return x, y
+
+    def draw_cell(self, row_idx: int, col_idx: int, col: int):
+        half = self.size // 2
+        x, y = self.grid_to_pixel(col_idx, row_idx, self.size)
+        arcade.draw_circle_filled(x, y, 3, arcade.color.WHITE)
+        if self.is_open(col, Direction.NORTH):
+            arcade.draw_line(x - half, y + half, x + half, y + half, arcade.color.BLUE, 3)
+        if self.is_open(col, Direction.EAST):
+            arcade.draw_line(x + half, y - half, x + half, y + half, arcade.color.BLUE, 3)
+        if self.is_open(col, Direction.SOUTH):
+            arcade.draw_line(x - half, y - half, x + half, y - half, arcade.color.BLUE, 3)
+        if self.is_open(col, Direction.WEST):
+            arcade.draw_line(x - half, y + half, x - half, y - half, arcade.color.BLUE, 3)
+
     def draw(self, window_width: float, window_height: float) -> None:
-        size: int = min(window_width // len(self.maze),
-                        window_height // len(self.maze[0]))
-        width_gap = (window_width - size * self.width) // 2
-        height_gap = (window_height - size * self.height) // 2
-        anc = arcade.Vec2()
-
-        x, y = width_gap, window_height - height_gap - 50
-        for _ in range(self.width):
-            wall = arcade.XYWH(x, y, size, 5, anc)
-            arcade.draw_rect_filled(wall, arcade.color.BLUE)
-            x += size
-
-        y = window_height - (height_gap + size) + 5 - 50
-        for row in self.maze:
-            x = width_gap - 5
-            wall = arcade.XYWH(x, y, 5, size, anc)
-            arcade.draw_rect_filled(wall, arcade.color.BLUE)
-            x += size + 5
-            for col in row:
-                if col >> 1 & 1:
-                    wall = arcade.XYWH(x, y, 5, size, anc)
-                    arcade.draw_rect_filled(wall, arcade.color.BLUE)
-                x += size
-            x = width_gap
-            for col in row:
-                if col >> 2 & 1:
-                    wall = arcade.XYWH(x, y, size, 5, anc)
-                    arcade.draw_rect_filled(wall, arcade.color.BLUE)
-                x += size
-            y -= size
-        for row in self.maze:
-            for col in row:
-                arcade.draw_point(x, y, arcade.color.YELLOW, 5.0)
+        for row_idx, row in enumerate(self.maze):
+            for col_idx, col in enumerate(row):
+                self.draw_cell(row_idx, col_idx, col)

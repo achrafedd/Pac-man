@@ -2,7 +2,7 @@ import arcade
 
 from GameView import Main_Menu
 from Maze import Maze
-from parser import check_config_values, take_arges, check_file, parse_json
+from parser import check_config_values, check_file, parse_json, take_arges
 
 
 def main() -> None:
@@ -11,9 +11,9 @@ def main() -> None:
     config = parse_json(data)
     config = check_config_values(config)
 
-    maze = Maze(config["width"], config["height"], config["seed"])
     # window._update_rate = 1000
     window = arcade.Window(fullscreen=True)
+    maze = Maze(config["width"], config["height"], config["seed"], window.width, window.height)
     menu = Main_Menu(maze, window)
     window.show_view(menu)
     arcade.run()

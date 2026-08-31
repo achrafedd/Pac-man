@@ -1,15 +1,14 @@
 import arcade
 
 from Maze import Maze
-from Player import Player
+from Player import Direction, Player
 
 
 class GameView(arcade.View):
     def __init__(self, maze: Maze) -> None:
         super().__init__()
-        arcade.set_background_color(arcade.color.TRANSPARENT_BLACK)
         self.maze: Maze = maze
-        self.player: Player = Player((960, 540), size=30)
+        self.player: Player = Player((0, 0), maze, size=30)
 
     def on_draw(self) -> None:
         self.clear()
@@ -20,20 +19,29 @@ class GameView(arcade.View):
         self.player.draw()
 
     def on_update(self, delta_time: float) -> None:
-        pass
+        self.player.d += 5 * delta_time
+        self.player.move()
+
+    def can_turn(self, x, y, dir):
+        mask, _, _, _, _ = self.player.directions[dir.value]
+        return not self.maze.maze[y][x] & mask
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
-            exit(0)
+            self.window.close()
         # Controle directions of player
         if symbol == arcade.key.UP:
-            self.player.direction = 'up'
+            if self.can_turn(self.player.x, self.player.y, Direction.UP):
+                self.player.direction = Direction.UP
         if symbol == arcade.key.RIGHT:
-            self.player.direction = 'right'
+            if self.can_turn(self.player.x, self.player.y, Direction.RIGHT):
+                self.player.direction = Direction.RIGHT
         if symbol == arcade.key.DOWN:
-            self.player.direction = 'down'
+            if self.can_turn(self.player.x, self.player.y, Direction.DOWN):
+                self.player.direction = Direction.DOWN
         if symbol == arcade.key.LEFT:
-            self.player.direction = 'left'
+            if self.can_turn(self.player.x, self.player.y, Direction.LEFT):
+                self.player.direction = Direction.LEFT
 
 
 class Main_Menu(arcade.View):
@@ -58,7 +66,9 @@ class Main_Menu(arcade.View):
 
     def on_key_press(self, symbol, modifiers):
         self.draw_menu()
-        if symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:
+        if symbol == arcade.key.Q:
+            self.window.close()
+        elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:
             self.__index = (self.__index + 1) % 4
             self.gap = (self.gap + 75) % (75*4)
         elif symbol == arcade.key.MOTION_UP or symbol == arcade.key.K:
