@@ -1,5 +1,6 @@
 import arcade
 
+from Ghost import Ghost
 from Maze import Maze
 from Player import Direction, Player
 
@@ -9,14 +10,19 @@ class GameView(arcade.View):
         super().__init__()
         self.maze: Maze = maze
         self.player: Player = Player((0, 0), maze, size=30)
+        self.ghost_red: Ghost = Ghost(0, 0, maze, arcade.color.RED)
+        self.ghost_blue: Ghost = Ghost(0, maze.height - 1, maze, arcade.color.CYAN)
+        self.ghost_pink: Ghost = Ghost(maze.width - 1, 0, maze, arcade.color.PINK)
+        self.ghost_orange: Ghost = Ghost(maze.width - 1, maze.height - 1, maze, arcade.color.ORANGE)
 
     def on_draw(self) -> None:
         self.clear()
-        anc = arcade.Vec2()
-        banner = arcade.XYWH(0, self.height - 75, self.width, 75, anc)
-        arcade.draw_rect_filled(banner, arcade.color.BLUE_BELL)
         self.maze.draw(self.width, self.height)
         self.player.draw()
+        self.ghost_red.draw()
+        self.ghost_blue.draw()
+        self.ghost_pink.draw()
+        self.ghost_orange.draw()
 
     def on_update(self, delta_time: float) -> None:
         self.player.d += 5 * delta_time
