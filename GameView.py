@@ -27,7 +27,7 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time: float) -> None:
         self.player.d += 5 * delta_time
-        self.player.move()
+        self.player.update(delta_time)
 
     def can_turn(self, x, y, dir):
         mask, _, _, _, _ = self.player.directions[dir.value]
@@ -38,17 +38,13 @@ class GameView(arcade.View):
             self.window.close()
         # Controle directions of player
         if symbol == arcade.key.UP:
-            if self.can_turn(self.player.x, self.player.y, Direction.UP):
-                self.player.direction = Direction.UP
+            self.player.next_direction = Direction.UP
         if symbol == arcade.key.RIGHT:
-            if self.can_turn(self.player.x, self.player.y, Direction.RIGHT):
-                self.player.direction = Direction.RIGHT
+            self.player.next_direction = Direction.RIGHT
         if symbol == arcade.key.DOWN:
-            if self.can_turn(self.player.x, self.player.y, Direction.DOWN):
-                self.player.direction = Direction.DOWN
+            self.player.next_direction = Direction.DOWN
         if symbol == arcade.key.LEFT:
-            if self.can_turn(self.player.x, self.player.y, Direction.LEFT):
-                self.player.direction = Direction.LEFT
+            self.player.next_direction = Direction.LEFT
 
 
 class Main_Menu(arcade.View):
