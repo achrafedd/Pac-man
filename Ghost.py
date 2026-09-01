@@ -11,7 +11,7 @@ class Ghost:
         self.color: Color = color
         self.fear: bool = False
         self.maze: Maze = maze
-        self.size: float = maze.size - 15
+        self.size: float = maze.size // 2
 
     def draw(self):
         if self.fear:
@@ -48,6 +48,9 @@ class Ghost:
         arcade.draw_arc_filled(x - leg_width, y - height + 1, leg_width, leg_width, self.color, 180, 360)
         arcade.draw_arc_filled(x, y - height + 1, leg_width, leg_width, self.color, 180, 360)
         arcade.draw_arc_filled(x + leg_width, y - height + 1, leg_width, leg_width, self.color, 180, 360)
+
+    def move(self) -> None:
+        pass
 
 
 # if __name__ == '__main__':

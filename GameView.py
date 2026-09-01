@@ -10,10 +10,11 @@ class GameView(arcade.View):
         super().__init__()
         self.maze: Maze = maze
         self.player: Player = Player((0, 0), maze, size=30)
-        self.ghost_red: Ghost = Ghost(0, 0, maze, arcade.color.RED)
-        self.ghost_blue: Ghost = Ghost(0, maze.height - 1, maze, arcade.color.CYAN)
-        self.ghost_pink: Ghost = Ghost(maze.width - 1, 0, maze, arcade.color.PINK)
-        self.ghost_orange: Ghost = Ghost(maze.width - 1, maze.height - 1, maze, arcade.color.ORANGE)
+        self.ghost_red: Ghost = Ghost(10, 10, maze, arcade.color.RED)
+        self.ghost_blue: Ghost = Ghost(0, 5, maze, arcade.color.CYAN)
+        self.ghost_pink: Ghost = Ghost(13, 0, maze, arcade.color.PINK)
+        self.ghost_orange: Ghost = Ghost(7, 9, maze, arcade.color.ORANGE)
+
 
     def on_draw(self) -> None:
         self.clear()
