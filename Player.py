@@ -28,6 +28,7 @@ class Player:
         self.next_direction: Direction = direction
         self.size: int = size
         self.speed: int = 5
+        self.score: int = 0
         self.directions: dict[str, tuple[int, int, int, int, int]] = {
                 'right': (2, 1, 0, 30, 330),
                 'down': (4, 0, 1, 300, 600),
@@ -38,6 +39,9 @@ class Player:
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self) -> None:
+        if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
+            self.score += self.maze.gums[self.y][self.x]
+            self.maze.gums[self.y][self.x] = 0
         se: float = self.directions[self.direction.value][3] + 20 * sin(self.d)
         ee: float = self.directions[self.direction.value][4] - 20 * sin(self.d)
         arcade.draw_arc_filled(self.pixel_x,

@@ -18,6 +18,11 @@ class GameView(arcade.View):
 
     def on_draw(self) -> None:
         self.clear()
+        arcade.draw_text(
+                f"SCORE: {self.player.score}",
+                100,
+                300
+                )
         self.maze.draw(self.width, self.height)
         self.player.draw()
         self.ghost_red.draw()
