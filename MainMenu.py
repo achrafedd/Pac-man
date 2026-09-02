@@ -1,6 +1,8 @@
 import arcade
-from Maze import Maze
+
 from GameView import GameView
+from LeaderBoard import LeaderBoard
+from Maze import Maze
 
 
 class Main_Menu(arcade.View):
@@ -9,7 +11,7 @@ class Main_Menu(arcade.View):
         super().__init__()
         self.menu_list: dict[str, arcade.View | None] = {
                 "start game": GameView(maze),
-                "high score": None,
+                "high score": LeaderBoard('leaderboard.json'),
                 "settings": None,
                 "exit": None
                 }
@@ -27,7 +29,7 @@ class Main_Menu(arcade.View):
         arcade.draw_texture_rect(self.background, self.bg_rect)
         self.draw_menu()
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol: int, modifiers):
         self.draw_menu()
         if symbol == arcade.key.Q:
             self.window.close()
