@@ -1,6 +1,6 @@
 import arcade
 
-from GameView import Main_Menu
+from MainMenu import Main_Menu
 from Maze import Maze
 from parser import check_config_values, check_file, parse_json, take_arges
 
