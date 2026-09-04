@@ -14,10 +14,13 @@ class GameView(arcade.View):
         self.ghost_blue: Ghost = Ghost(0, 5, maze, arcade.color.CYAN)
         self.ghost_pink: Ghost = Ghost(13, 0, maze, arcade.color.PINK)
         self.ghost_orange: Ghost = Ghost(7, 9, maze, arcade.color.ORANGE)
+        self.bg: arcade.Texture = arcade.load_texture('assets/background.jpeg')
+        self.bg_rect: arcade.Rect = arcade.XYWH(0, 0, self.width, self.height, arcade.Vec2())
 
 
     def on_draw(self) -> None:
         self.clear()
+        arcade.draw_texture_rect(self.bg, self.bg_rect)
         arcade.draw_text(
                 f"SCORE: {self.player.score}",
                 100,

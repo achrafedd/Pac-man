@@ -66,11 +66,13 @@ class Maze:
     def draw_cell(self, row_idx: int, col_idx: int, col: int):
         half = self.size // 2
         x, y = self.grid_to_pixel(col_idx, row_idx, self.size)
+        rect = arcade.XYWH(x, y, self.size, self.size)
 
         # Draw 42 rect
         if col == 15:
-            rect = arcade.XYWH(x, y, self.size, self.size)
             arcade.draw_rect_filled(rect, (255, 255, 255))
+        else:
+            arcade.draw_rect_filled(rect, (0, 0, 0))
 
         # Draw Gums
         if self.gums[row_idx][col_idx] == 1:
