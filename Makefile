@@ -1,5 +1,5 @@
 run:
-	uv run pac-man.py $(FILE)
+	uv run pac-man.py config.json
 
 install:
 	uv sync
