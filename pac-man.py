@@ -13,6 +13,8 @@ def main() -> None:
 
     # window._update_rate = 1000
     window = arcade.Window(fullscreen=True)
+    arcade.load_font('assets/fonts/Pacmania.ttf')
+    arcade.load_font('assets/fonts/PressStart2P-Regular.ttf')
     maze = Maze(config["width"], config["height"], config["seed"], window.width, window.height)
     menu = Main_Menu(maze, window)
     window.show_view(menu)
