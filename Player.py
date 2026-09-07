@@ -79,3 +79,4 @@ class Player:
         else:
             self.pixel_x += step * dx / distance
             self.pixel_y += step * dy / distance
+

@@ -1,9 +1,9 @@
 import arcade
 
-from MainMenu import Main_Menu
+from Menu import Main_Menu
 from Maze import Maze
 from parser import check_config_values, check_file, parse_json, take_arges
-
+# fr
 
 def main() -> None:
     file = take_arges()

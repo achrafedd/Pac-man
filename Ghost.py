@@ -5,9 +5,9 @@ from Maze import Maze
 
 
 class Ghost:
-    def __init__(self, x: int, y: int, maze: Maze, color: Color) -> None:
-        self.x: int = x
-        self.y: int = y
+    def __init__(self, cordinates: tuple[int, int], maze: Maze, color: Color) -> None:
+        self.x: int = cordinates[0]
+        self.y: int = cordinates[1]
         self.color: Color = color
         self.fear: bool = False
         self.maze: Maze = maze
