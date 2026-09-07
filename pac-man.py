@@ -1,8 +1,9 @@
 import arcade
 
-from Menu import Main_Menu
 from Maze import Maze
+from Menu import Main_Menu
 from parser import check_config_values, check_file, parse_json, take_arges
+
 # fr
 
 def main() -> None:
@@ -16,7 +17,7 @@ def main() -> None:
     arcade.load_font('assets/fonts/Pacmania.ttf')
     arcade.load_font('assets/fonts/PressStart2P-Regular.ttf')
     maze = Maze(config["width"], config["height"], config["seed"], window.width, window.height)
-    menu = Main_Menu(maze, window)
+    menu = Main_Menu(config)
     window.show_view(menu)
     arcade.run()
 
