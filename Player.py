@@ -18,7 +18,6 @@ class Player:
                  cordinates: tuple[int, int],
                  maze: Maze,
                  direction: Direction = Direction.RIGHT,
-                 size: int = 10
                  ) -> None:
         self.d: float = 1
         self.x: int = cordinates[0]
@@ -26,7 +25,7 @@ class Player:
         self.maze: Maze = maze
         self.direction: Direction = direction
         self.next_direction: Direction = direction
-        self.size: int = size
+        self.size: int = maze.size // 2
         self.speed: int = 5
         self.score: int = 0
         self.directions: dict[str, tuple[int, int, int, int, int]] = {
