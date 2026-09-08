@@ -29,8 +29,8 @@ class Maze:
         #     print(i)
         self.init_gums()
         self.size: float = min(
-                        window_width // len(self.maze),
-                        window_height // len(self.maze[0]))
+                        (window_width - 100) / width,
+                        (window_height - 300) / height)
 
     def init_gums(self) -> None:
         self.gums = [[0] * self.width for _ in range(self.height)]

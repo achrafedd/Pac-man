@@ -1,27 +1,28 @@
+from typing import Any
+
 import arcade
 
 from Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
 from Maze import Maze
-from Player import Direction, Player
+
 # from PauseMenu import PauseMenu
 from Menu import PauseMenu
-from typing import Any
+from Player import Direction, Player
+
 
 class GameView(arcade.View):
-    def __init__(self, maze: Maze, window: arcade.Window, config: dict[Any, Any], Main_menu) -> None:
+    def __init__(self, maze: Maze, config: dict[Any, Any], Main_menu) -> None:
         super().__init__()
         self.maze: Maze = maze
-        self.window = window
         self.config = config
         self.main_menu = Main_menu
-        self.player: Player = Player((2, 2), maze, size=30)
+        self.player: Player = Player((2, 2), maze)
         self.ghost_red: Red_Ghost = Red_Ghost((10, 10), maze, arcade.color.RED, self.player)
         self.ghost_blue: Blue_Ghost = Blue_Ghost((0, 5), maze, arcade.color.CYAN, self.player)
         self.ghost_pink: Pink_Ghost = Pink_Ghost((13, 0), maze, arcade.color.PINK, self.player)
         self.ghost_orange: Orange_Ghost = Orange_Ghost((7, 9), maze, arcade.color.ORANGE, self.player)
         self.bg: arcade.Texture = arcade.load_texture('assets/background.jpeg')
         self.bg_rect: arcade.Rect = arcade.XYWH(0, 0, self.width, self.height, arcade.Vec2())
-                
 
 
     def on_draw(self) -> None:
@@ -63,5 +64,3 @@ class GameView(arcade.View):
             self.player.next_direction = Direction.DOWN
         if symbol == arcade.key.LEFT:
             self.player.next_direction = Direction.LEFT
-
-

@@ -1,8 +1,10 @@
+from typing import Any
+
 import arcade
 import cv2
+
 from LeaderBoard import LeaderBoard
 from Maze import Maze
-from typing import Any
 
 
 class Main_Menu(arcade.View):
@@ -12,7 +14,7 @@ class Main_Menu(arcade.View):
         self.maze = Maze(config["width"], config["height"], config["seed"], self.window.width, self.window.height)
         self.config = config
         self.menu_list: dict[str, arcade.View | None] = {
-                "start game": GameView(self.maze, self.window, config, self),
+                "start game": GameView(self.maze, config, self),
                 "high score": LeaderBoard('leaderboard.json'),
                 "settings": None,
                 "exit": None
