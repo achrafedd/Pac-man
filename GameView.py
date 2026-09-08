@@ -1,6 +1,6 @@
 import arcade
 
-from Ghost import Ghost
+from Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
 from Maze import Maze
 from Player import Direction, Player
 # from PauseMenu import PauseMenu
@@ -8,16 +8,17 @@ from Menu import PauseMenu
 from typing import Any
 
 class GameView(arcade.View):
-    def __init__(self, maze: Maze, window: arcade.Window, config: dict[Any, Any]) -> None:
+    def __init__(self, maze: Maze, window: arcade.Window, config: dict[Any, Any], Main_menu) -> None:
         super().__init__()
         self.maze: Maze = maze
         self.window = window
         self.config = config
-        self.player: Player = Player((0, 0), maze, size=30)
-        self.ghost_red: Ghost = Ghost((10, 10), maze, arcade.color.RED)
-        self.ghost_blue: Ghost = Ghost((0, 5), maze, arcade.color.CYAN)
-        self.ghost_pink: Ghost = Ghost((13, 0), maze, arcade.color.PINK)
-        self.ghost_orange: Ghost = Ghost((7, 9), maze, arcade.color.ORANGE)
+        self.main_menu = Main_menu
+        self.player: Player = Player((2, 2), maze, size=30)
+        self.ghost_red: Red_Ghost = Red_Ghost((10, 10), maze, arcade.color.RED, self.player)
+        self.ghost_blue: Blue_Ghost = Blue_Ghost((0, 5), maze, arcade.color.CYAN, self.player)
+        self.ghost_pink: Pink_Ghost = Pink_Ghost((13, 0), maze, arcade.color.PINK, self.player)
+        self.ghost_orange: Orange_Ghost = Orange_Ghost((7, 9), maze, arcade.color.ORANGE, self.player)
         self.bg: arcade.Texture = arcade.load_texture('assets/background.jpeg')
         self.bg_rect: arcade.Rect = arcade.XYWH(0, 0, self.width, self.height, arcade.Vec2())
                 
@@ -52,7 +53,7 @@ class GameView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             image = arcade.get_image()
             image.save("assets/Pausebg.png")
-            self.window.show_view(PauseMenu(self.config, self))
+            self.window.show_view(PauseMenu(self.config, self, self.main_menu))
         # Controle directions of player
         if symbol == arcade.key.UP:
             self.player.next_direction = Direction.UP

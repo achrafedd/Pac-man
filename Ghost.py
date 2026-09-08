@@ -1,18 +1,20 @@
 import arcade
 from arcade.types import Color
-
+from abc import ABC, abstractmethod
 from Maze import Maze
 
 
-class Ghost:
-    def __init__(self, cordinates: tuple[int, int], maze: Maze, color: Color) -> None:
+class Ghost(ABC):
+    def __init__(self, cordinates: tuple[int, int], maze: Maze, color: Color, player) -> None:
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
         self.color: Color = color
         self.fear: bool = False
         self.maze: Maze = maze
         self.size: float = maze.size // 2
+        self.player = player
 
+    @abstractmethod
     def draw(self):
         if self.fear:
             self.color = arcade.color.BLUE
@@ -49,14 +51,88 @@ class Ghost:
         arcade.draw_arc_filled(x, y - height + 1, leg_width, leg_width, self.color, 180, 360)
         arcade.draw_arc_filled(x + leg_width, y - height + 1, leg_width, leg_width, self.color, 180, 360)
 
+    @abstractmethod
     def move(self) -> None:
+        
         pass
 
 
-# if __name__ == '__main__':
-#     window = arcade.Window(fullscreen=True)
-#     ghost = Ghost((255, 0, 0), window)
-#     arcade.start_render()
-#     ghost.draw()
-#     arcade.finish_render()
-#     arcade.run()
+class Red_Ghost(Ghost):
+    def __init__(self, cordinates, maze, color, player):
+        super().__init__(cordinates, maze, color, player)
+        self.pixel_x, self.pixel_y = maze.grid_to_pixel(self.x, self.y, maze.size)
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
+        self.move()
+
+    def draw(self):
+        return super().draw()
+
+    def get_path(self):
+        x_player = self.player.x
+        y_player = self.player.y
+        x_ghost = self.x
+        y_ghost = self.y
+        start = (x_ghost, y_ghost)
+        goal = (x_player, y_player)
+        queue = [start]
+        visited = {start}
+        parent = {}
+        while queue:
+            curr = queue.pop(0)
+            if curr == goal:
+                break
+            x, y = curr
+            for neighbor in self.maze.get_neighbor(x, y):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = curr
+                    queue.append(neighbor)
+        path = []
+        curr = goal
+        while curr != start:
+            path.append(curr)
+            curr = parent[curr]
+        path.append(start)
+        path.reverse()
+        return path
+
+    def move(self):
+        path = self.get_path()
+
+
+    def update(self, delta_time: float) -> None:
+        if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
+            self.move()
+
+
+
+
+class Pink_Ghost(Ghost):
+    def __init__(self, cordinates, maze, color, player):
+        super().__init__(cordinates, maze, color, player)
+
+    def draw(self):
+        return super().draw()
+
+    def move(self):
+        return super().move()
+
+class Orange_Ghost(Ghost):
+    def __init__(self, cordinates, maze, color, player):
+        super().__init__(cordinates, maze, color, player)
+
+    def draw(self):
+        return super().draw()
+
+    def move(self):
+        return super().move()
+
+class Blue_Ghost(Ghost):
+    def __init__(self, cordinates, maze, color, player):
+        super().__init__(cordinates, maze, color, player)
+
+    def draw(self):
+        return super().draw()
+
+    def move(self):
+        return super().move()

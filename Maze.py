@@ -25,6 +25,8 @@ class Maze:
         self.cx: int = window_width // 2
         self.cy: int = window_height // 2
         self.init_maze()
+        # for i in self.maze:
+        #     print(i)
         self.init_gums()
         self.size: float = min(
                         window_width // len(self.maze),
@@ -55,6 +57,19 @@ class Maze:
     @staticmethod
     def is_open(cell_value: int, direction: Direction) -> bool:
         return cell_value & direction.value != 0
+
+    def get_neighbor(self, x, y):
+        cell = self.maze[x][y]
+        neighbors = []
+        if not cell >> 0 & 1 and x > 0:
+            neighbors.append((x - 1,y))
+        if not cell >> 1 & 1 and  y < self.height - 1:
+            neighbors.append((x,y + 1))
+        if not cell >> 2 & 1 and x < self.width - 1:
+            neighbors.append((x + 1,y))
+        if not cell >> 3 & 1 and y > 0:
+            neighbors.append((x,y - 1))
+        return neighbors
 
     def grid_to_pixel(self, col, row, tile_size) -> tuple[float, float]:
         margin_x = tile_size * (len(self.maze[0]) // 2)
