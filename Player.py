@@ -19,6 +19,7 @@ class Player:
                  maze: Maze,
                  direction: Direction = Direction.RIGHT,
                  ) -> None:
+        self.dir: int = 1
         self.d: float = 1
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]

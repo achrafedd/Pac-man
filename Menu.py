@@ -12,9 +12,8 @@ class Main_Menu(arcade.View):
         super().__init__()
         from GameView import GameView
         self.maze = Maze(config["width"], config["height"], config["seed"], self.window.width, self.window.height)
-        self.config = config
         self.menu_list: dict[str, arcade.View | None] = {
-                "start game": GameView(self.maze, config, self),
+                "start game": GameView(self.maze, self, config),
                 "high score": LeaderBoard('leaderboard.json'),
                 "settings": None,
                 "exit": None
@@ -102,11 +101,12 @@ class Main_Menu(arcade.View):
 
 
 class PauseMenu(arcade.View):
-    def __init__(self, config: dict[Any, Any], game, main_menu):
+    def __init__(self, game, config):
         super().__init__()
+        self.config = config
         self.menu_list : dict[Any, Any]= {
             "Resume the game": game,
-            "Return to the main menu": main_menu
+            "Return to the main menu": Main_Menu(config),
             }
         self.__index: int = 0
         self.gap: float = 0

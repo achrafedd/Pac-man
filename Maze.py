@@ -59,16 +59,17 @@ class Maze:
         return cell_value & direction.value != 0
 
     def get_neighbor(self, x, y):
-        cell = self.maze[x][y]
+        # print(x, y)
+        cell = self.maze[y][x]
         neighbors = []
-        if not cell >> 0 & 1 and x > 0:
-            neighbors.append((x - 1,y))
-        if not cell >> 1 & 1 and  y < self.height - 1:
-            neighbors.append((x,y + 1))
-        if not cell >> 2 & 1 and x < self.width - 1:
-            neighbors.append((x + 1,y))
-        if not cell >> 3 & 1 and y > 0:
-            neighbors.append((x,y - 1))
+        if not cell >> 0 & 1 and y > 0:
+            neighbors.append((y - 1, x))
+        if not cell >> 1 & 1 and x < self.width - 1:
+            neighbors.append((y, x + 1))
+        if not cell >> 2 & 1 and y < self.height - 1:
+            neighbors.append((y + 1, x))
+        if not cell >> 3 & 1 and x > 0:
+            neighbors.append((y, x - 1))
         return neighbors
 
     def grid_to_pixel(self, col, row, tile_size) -> tuple[float, float]:

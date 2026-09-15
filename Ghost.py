@@ -13,7 +13,30 @@ class Ghost(ABC):
         self.maze: Maze = maze
         self.size: float = maze.size // 2
         self.player = player
+        self.pixel_x, self.pixel_y = maze.grid_to_pixel(self.x, self.y, maze.size)
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
+        self.speed : int = 4
 
+    def update(self, delta_time: float) -> None:
+        if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
+            self.move()
+
+        step = self.speed * self.maze.size * delta_time
+        dx = self.target_x - self.pixel_x
+        dy = self.target_y - self.pixel_y
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+
+        if distance <= step or distance == 0:
+            self.pixel_x = self.target_x
+            self.pixel_y = self.target_y
+        else:
+            self.pixel_x += dx / distance * step
+            self.pixel_y += dy / distance * step
+
+    @abstractmethod
+    def get_path(self):
+        pass
+    
     @abstractmethod
     def draw(self):
         if self.fear:
@@ -53,16 +76,12 @@ class Ghost(ABC):
 
     @abstractmethod
     def move(self) -> None:
-        
         pass
 
 
 class Red_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
-        self.pixel_x, self.pixel_y = maze.grid_to_pixel(self.x, self.y, maze.size)
-        self.target_x, self.target_y = self.pixel_x, self.pixel_y
-        self.move()
 
     def draw(self):
         return super().draw()
@@ -72,16 +91,17 @@ class Red_Ghost(Ghost):
         y_player = self.player.y
         x_ghost = self.x
         y_ghost = self.y
-        start = (x_ghost, y_ghost)
-        goal = (x_player, y_player)
+        start = (y_ghost, x_ghost)
+        goal = (y_player, x_player)
         queue = [start]
         visited = {start}
         parent = {}
         while queue:
+            # print(queue)
             curr = queue.pop(0)
             if curr == goal:
                 break
-            x, y = curr
+            y, x = curr
             for neighbor in self.maze.get_neighbor(x, y):
                 if neighbor not in visited:
                     visited.add(neighbor)
@@ -91,20 +111,19 @@ class Red_Ghost(Ghost):
         curr = goal
         while curr != start:
             path.append(curr)
-            curr = parent[curr]
+            curr = parent.get(curr, None)
+            if curr is None:
+                return []
         path.append(start)
         path.reverse()
         return path
 
     def move(self):
         path = self.get_path()
-
-
-    def update(self, delta_time: float) -> None:
-        if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
-            self.move()
-
-
+        if len(path) < 2:
+            return
+        self.y, self.x = path[1]
+        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
 
 
 class Pink_Ghost(Ghost):
@@ -114,25 +133,159 @@ class Pink_Ghost(Ghost):
     def draw(self):
         return super().draw()
 
+
+    def get_path(self):
+        x_player = self.player.x
+        y_player = self.player.y
+        x_ghost = self.x
+        y_ghost = self.y
+        start = (y_ghost, x_ghost)
+        # 1 right
+        # 2 down
+        # 3 left
+        # 0 up
+        if self.player.dir == 1:
+            goal = (y_player, (x_player + 1) % self.maze.width - 1)
+        elif self.player.dir == 2:
+            goal = ((y_player + 1) % self.maze.height - 1, x_player)
+        elif self.player.dir == 3:
+            goal = (y_player, (x_player - 1) % self.maze.width - 1)
+        else:
+            goal = ((y_player - 1) % self.maze.height - 1, x_player)
+        queue = [start]
+        visited = {start}
+        parent = {}
+        while queue:
+            curr = queue.pop(0)
+            if curr == goal:
+                break
+            y, x = curr
+            for neighbor in self.maze.get_neighbor(x, y):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = curr
+                    queue.append(neighbor)
+        path = []
+        curr = goal
+        while curr != start:
+            path.append(curr)
+            curr = parent.get(curr, None)
+            if curr is None:
+                return []
+        path.append(start)
+        path.reverse()
+        return path
+
+
+
     def move(self):
-        return super().move()
+        path = self.get_path()
+        if len(path) < 2:
+            return
+        self.y, self.x = path[1]
+        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
 
 class Orange_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
-
+        self.raduis = min(self.maze.width, self.maze.height) / 2
+    
     def draw(self):
         return super().draw()
 
-    def move(self):
-        return super().move()
+    def get_path(self, goal):
+        x_ghost = self.x
+        y_ghost = self.y
+        start = (y_ghost, x_ghost)
+        queue = [start]
+        visited = {start}
+        parent = {}
+        while queue:
+            curr = queue.pop(0)
+            if curr == goal:
+                break
+            y, x = curr
+            for neighbor in self.maze.get_neighbor(x, y):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = curr
+                    queue.append(neighbor)
+        path = []
+        curr = goal
+        while curr != start:
+            path.append(curr)
+            curr = parent.get(curr, None)
+            if curr is None:
+                return []
+        path.append(start)
+        path.reverse()
+        return path
 
+    def move(self):
+        if (self.x-self.player.x)**2 + (self.y-self.player.y)**2 <= self.raduis**2:
+            home = self.get_path((self.maze.height - 1, 0))
+            if len(home) < 2:
+                return
+            self.y, self.x = home[1]
+        else:
+            path = self.get_path((self.player.y, self.player.x))
+            if len(path) < 2:
+                return
+            self.y , self.x = path[1]
+
+        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
+        
+    
 class Blue_Ghost(Ghost):
-    def __init__(self, cordinates, maze, color, player):
+    def __init__(self, cordinates, maze, color, player, red_ghost: Red_Ghost):
         super().__init__(cordinates, maze, color, player)
+        self.red_ghost = red_ghost
 
     def draw(self):
         return super().draw()
 
+    def get_path(self, goal):
+        x_ghost = self.x
+        y_ghost = self.y
+        start = (y_ghost, x_ghost)
+        queue = [start]
+        visited = {start}
+        parent = {}
+        while queue:
+            curr = queue.pop(0)
+            if curr == goal:
+                break
+            y, x = curr
+            for neighbor in self.maze.get_neighbor(x, y):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = curr
+                    queue.append(neighbor)
+        path = []
+        curr = goal
+        while curr != start:
+            path.append(curr)
+            curr = parent.get(curr, None)
+            if curr is None:
+                return []
+        path.append(start)
+        path.reverse()
+        return path
+
     def move(self):
-        return super().move()
+        if self.player.dir == 1:
+            dir = (self.player.y, (self.player.x + 2) % self.maze.width - 1)
+        elif self.player.dir == 2:
+            dir = ((self.player.y + 2) % self.maze.height - 1, self.player.x)
+        elif self.player.dir == 3:
+            dir = (self.player.y, (self.player.x - 2) % self.maze.width - 1)
+        else:
+            dir = ((self.player.y - 2) % self.maze.height - 1, self.player.x)
+        dx = dir[1] - self.red_ghost.x
+        dy = dir[0] - self.red_ghost.y
+        goal = (self.player.y + dy, self.player.x + dx)
+        path = self.get_path(goal)
+        if len(path) < 2:
+            return
+        self.y , self.x = path[1]
+        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
