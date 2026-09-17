@@ -1,0 +1,12 @@
+__pychashe__/
+*.py[cod]
+.$py.class
+
+.env
+.venv
+
+build/
+.Python
+develop-eggs/
+dist/
+
