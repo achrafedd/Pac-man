@@ -22,6 +22,7 @@ class Ghost(ABC):
             self.move()
 
         step = self.speed * self.maze.size * delta_time
+        step /= 1.5
         dx = self.target_x - self.pixel_x
         dy = self.target_y - self.pixel_y
         distance = (dx ** 2 + dy ** 2) ** 0.5
@@ -41,7 +42,7 @@ class Ghost(ABC):
     def draw(self):
         if self.fear:
             self.color = arcade.color.BLUE
-        x, y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
+        x, y = (self.pixel_x, self.pixel_y)
 
         # Draw Body
         arcade.draw_arc_filled(x, y, self.size, self.size, self.color, 0, 180)
@@ -188,7 +189,7 @@ class Pink_Ghost(Ghost):
 class Orange_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
-        self.raduis = min(self.maze.width, self.maze.height) / 2
+        self.raduis = 5
     
     def draw(self):
         return super().draw()
@@ -273,19 +274,28 @@ class Blue_Ghost(Ghost):
         return path
 
     def move(self):
-        if self.player.dir == 1:
-            dir = (self.player.y, (self.player.x + 2) % self.maze.width - 1)
-        elif self.player.dir == 2:
-            dir = ((self.player.y + 2) % self.maze.height - 1, self.player.x)
-        elif self.player.dir == 3:
-            dir = (self.player.y, (self.player.x - 2) % self.maze.width - 1)
-        else:
-            dir = ((self.player.y - 2) % self.maze.height - 1, self.player.x)
-        dx = dir[1] - self.red_ghost.x
-        dy = dir[0] - self.red_ghost.y
-        goal = (self.player.y + dy, self.player.x + dx)
+        if self.player.dir == 1:  # right
+            ahead = (self.player.y, (self.player.x + 2) % self.maze.width)
+        elif self.player.dir == 2:  # down
+            ahead = ((self.player.y + 2) % self.maze.height, self.player.x)
+        elif self.player.dir == 3:  # left
+            ahead = (self.player.y, (self.player.x - 2) % self.maze.width)
+        else:  # up
+            ahead = ((self.player.y - 2) % self.maze.height, self.player.x)
+
+        goal = (
+            2 * ahead[0] - self.red_ghost.y,
+            2 * ahead[1] - self.red_ghost.x
+        )
+
+        goal = (
+            max(0, min(self.maze.height - 1, goal[0])),
+            max(0, min(self.maze.width - 1, goal[1])),
+        )
+
         path = self.get_path(goal)
         if len(path) < 2:
             return
-        self.y , self.x = path[1]
+
+        self.y, self.x = path[1]
         self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)

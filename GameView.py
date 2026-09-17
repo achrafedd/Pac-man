@@ -55,8 +55,8 @@ class GameView(arcade.View):
             self.window.close()
         self.player.d += 5 * delta_time
         self.player.update(delta_time)
-        # self.ghost_red.update(delta_time)
-        # self.ghost_blue.update(delta_time)
+        self.ghost_red.update(delta_time)
+        self.ghost_blue.update(delta_time)
         self.ghost_pink.update(delta_time)
         self.ghost_orange.update(delta_time)
 
