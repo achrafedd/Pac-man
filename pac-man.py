@@ -1,30 +1,78 @@
+from typing import Any
+
 import arcade
 
+from GameView import GameView
+from LeaderBoard import LeaderBoard
 from Maze import Maze
-from Menu import Main_Menu
+from Menu import MainMenu, PauseMenu
 from parser import check_config_values, check_file, parse_json, take_arges
+from utils import Stats
 
-# fr
 
-def main() -> None:
-    file = take_arges()
-    data = check_file(file)
-    config = parse_json(data)
-    config = check_config_values(config)
+class Pacman(arcade.Window):
+    def __init__(self, config: dict, fullscreen: bool = False) -> None:
+        super().__init__(fullscreen=fullscreen)
+        self.__config: dict = config
+        self.maze: Maze = Maze(
+            config["width"],
+            config["height"],
+            config["seed"],
+            self.width,
+            self.height,
+        )
+        self.menu: MainMenu = MainMenu(config, self)
+        self.game: GameView = GameView(self.maze, self.menu, config, self)
+        self.leaderboard: LeaderBoard = LeaderBoard("leaderboard.json", self)
+        self.pause: PauseMenu = PauseMenu(self)
+        self.stat: Stats = Stats.MAIN_MENU
 
-    # window._update_rate = 1000
-    window = arcade.Window(fullscreen=True)
-    arcade.load_font('assets/fonts/Pacmania.ttf')
-    arcade.load_font('assets/fonts/PressStart2P-Regular.ttf')
-    maze = Maze(config["width"], config["height"], config["seed"], window.width, window.height)
-    menu = Main_Menu(config)
-    window.show_view(menu)
-    arcade.run()
+    def on_update(self, delta_time: float) -> None:
+        if self.stat == Stats.GAME_VIEW:
+            self.game.on_update(delta_time)
+
+    def on_draw(self) -> None:
+        if self.stat == Stats.MAIN_MENU:
+            del self.maze
+            self.maze = Maze(
+                self.__config["width"],
+                self.__config["height"],
+                self.__config["seed"],
+                self.width,
+                self.height,
+            )
+            self.game: GameView = GameView(
+                self.maze, self.menu, self.__config, self
+            )
+            self.menu.on_draw()
+        elif self.stat == Stats.GAME_VIEW:
+            self.game.on_draw()
+        elif self.stat == Stats.LEADERBOARD:
+            self.leaderboard.on_draw()
+        elif self.stat == Stats.PAUSE_MENU:
+            self.pause.on_draw()
+
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
+        if self.stat == Stats.MAIN_MENU:
+            self.menu.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.GAME_VIEW:
+            self.game.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.LEADERBOARD:
+            self.leaderboard.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.PAUSE_MENU:
+            self.pause.on_key_press(symbol, modifiers)
 
 
 if __name__ == "__main__":
-    main()
-    try:
-        pass
-    except Exception as e:
-        print(f"Error: {e}")
+    # try:
+    file = take_arges()
+    data = check_file(file)
+    config: Any = parse_json(data)
+    config: dict[Any, Any] = check_config_values(config)
+
+    arcade.load_font("assets/fonts/Pacmania.ttf")
+    arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
+    Pacman(config, True)
+    arcade.run()
+# except Exception as e:
+#    print(f"Error: {e}")

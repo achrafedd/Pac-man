@@ -9,7 +9,7 @@ def take_arges() -> str:
     if len(args) != 2:
         raise Parsing(
             "wrong arguments \ntry this: python3 pac-man.py config.json"
-            )
+        )
     file = args[1]
     return file
 
@@ -18,7 +18,7 @@ def check_file(file: str) -> str:
     if not file.endswith(".json"):
         raise Parsing(
             "wrong file type \ntry this: python3 pac-man.py config.json"
-            )
+        )
     try:
         with open(file, "r") as f:
             data = f.read()
@@ -56,7 +56,7 @@ def check_config_values(config: dict) -> dict:
         "points_per_pacgum": 10,
         "points_per_super_pacgum": 50,
         "points_per_ghost": 200,
-        "seed": 42
+        "seed": 42,
     }
     for key, value in config.items():
         if key not in default:
@@ -67,7 +67,7 @@ def check_config_values(config: dict) -> dict:
                 print(
                     f"\033[91mWarning: Config key '{key}' "
                     "has wrong type.\033[0m"
-                    )
+                )
                 continue
             default[key] = value
     return default
