@@ -3,13 +3,15 @@ from typing import Any
 
 import arcade
 
+from utils import LeaderBoardSchema, Stats
 
-class LeaderBoard(arcade.View):
+
+class LeaderBoard:
     def __init__(self, file: str, window: arcade.Window) -> None:
         super().__init__()
         self.window: arcade.Window = window
         self.file: str = file
-        self.leader_board: dict = self.readfile()
+        self.leader_board: list[LeaderBoardSchema] | None = self.readfile()
         self.start: int = 0
         self.end: int = 10
         self.bg: arcade.Texture = arcade.load_texture("assets/background.jpeg")
@@ -17,17 +19,22 @@ class LeaderBoard(arcade.View):
         self.cup: arcade.Texture = arcade.load_texture("assets/cup.png")
         self.medal: arcade.Texture = arcade.load_texture("assets/medal.png")
         self.bg_rect: arcade.Rect = arcade.XYWH(
-            0, 0, self.width, self.height, arcade.Vec2()
+            0, 0, window.width, window.height, arcade.Vec2()
         )
 
-    def readfile(self) -> Any:
+    def readfile(self) -> list[LeaderBoardSchema] | None:
         data = {}
         with open(self.file) as file:
-            data = json.load(file)
-        data = sorted(data, key=lambda x: x["score"], reverse=True)
-        return data
+            try:
+                data = json.load(file)
+            except json.JSONDecodeError:
+                return None
 
-    def score_row(self, x, y, rank: int, name: str, score: int):
+        data = sorted(data, key=lambda x: x["score"], reverse=True)
+        res = [LeaderBoardSchema(**el) for el in data]
+        return res
+
+    def score_row(self, x: float, y: float, rank: int, name: str, score: int):
         rect = arcade.XYWH(x - 300, y, 50, 50)
         if rank == 1:
             arcade.draw_texture_rect(self.crown, rect)
@@ -36,8 +43,8 @@ class LeaderBoard(arcade.View):
         elif rank == 3:
             arcade.draw_texture_rect(self.medal, rect)
         else:
-            arcade.draw_text(
-                rank,
+            rand_text = arcade.Text(
+                str(rank),
                 x - 300,
                 y,
                 arcade.color.WHITE,
@@ -46,7 +53,8 @@ class LeaderBoard(arcade.View):
                 font_name="Press Start 2P",
                 anchor_y="center",
             )
-        arcade.draw_text(
+            rand_text.draw()
+        name_text = arcade.Text(
             name,
             x,
             y,
@@ -56,8 +64,9 @@ class LeaderBoard(arcade.View):
             font_name="Press Start 2P",
             anchor_y="center",
         )
-        arcade.draw_text(
-            score,
+        name_text.draw()
+        score_text = arcade.Text(
+            str(score),
             x + 300,
             y,
             arcade.color.WHITE,
@@ -66,25 +75,44 @@ class LeaderBoard(arcade.View):
             font_name="Press Start 2P",
             anchor_y="center",
         )
+        score_text.draw()
 
     def on_draw(self) -> None:
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         rect = arcade.XYWH(
-            self.width // 2, self.height // 2 - 50, 700, self.height - 300
+            self.window.width // 2,
+            self.window.height // 2 - 50,
+            700,
+            self.window.height - 300,
         )
         arcade.draw_rect_filled(rect, (0, 0, 0, 150))
         arcade.draw_rect_outline(rect, arcade.color.WHITE)
-        arcade.draw_text(
+        text = arcade.Text(
             "LEADER BOARD",
-            self.width // 2,
-            self.height - 100,
+            self.window.width // 2,
+            self.window.height - 100,
             arcade.color.YELLOW,
             50,
             font_name="pacmania",
             anchor_x="center",
             anchor_y="center",
         )
-        x, y = self.width // 2, self.height - 200
+        text.draw()
+        x, y = self.window.width // 2, self.window.height - 200
+        if self.leader_board is None:
+            empty = arcade.Text(
+                "Leader Board is empty",
+                self.window.width // 2,
+                self.window.height // 2,
+                arcade.color.YELLOW,
+                18,
+                font_name="Press Start 2P",
+                anchor_x="center",
+                anchor_y="center",
+            )
+            empty.draw()
+            return
+
         for idx, element in enumerate(
             self.leader_board[self.start : self.end], start=1
         ):
@@ -92,8 +120,8 @@ class LeaderBoard(arcade.View):
                 x,
                 y - (idx * 70),
                 idx + self.start,
-                element["name"],
-                element["score"],
+                element.name,
+                element.score,
             )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
@@ -107,3 +135,5 @@ class LeaderBoard(arcade.View):
             if self.start > 0:
                 self.start -= 1
                 self.end -= 1
+        elif symbol == arcade.key.M:
+            self.window.stat = Stats.MAIN_MENU

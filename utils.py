@@ -1,12 +1,12 @@
-from enum import Enum, auto
-from typing import Optional
-from pydantic import BaseModel, ValidationError, model_validator
+from pydantic import BaseModel, Field, ValidationError, model_validator
+from enum import auto, Enum
 
 
 class Stats(Enum):
     MAIN_MENU = auto()
     LEADERBOARD = auto()
     GAME_VIEW = auto()
+    INSTRUCTIONS = auto()
     PAUSE_MENU = auto()
     GAME_OVER = auto()
     VICTORY = auto()
@@ -72,6 +72,11 @@ class Config(BaseModel):
                 raise ValueError("The miximum height and width is 40")
 
         return self
+
+
+class LeaderBoardSchema(BaseModel):
+    name: str = Field(..., max_length=10)
+    score: int = Field(..., ge=0)
 
 
 if __name__ == "__main__":

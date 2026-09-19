@@ -12,7 +12,7 @@ class MainMenu:
         self.menu_list: dict[str, Stats] = {
             "start game": Stats.GAME_VIEW,
             "high score": Stats.LEADERBOARD,
-            "settings": Stats.LEADERBOARD,
+            "Instructions": Stats.INSTRUCTIONS,
             "exit": Stats.EXIT,
         }
         self.window: arcade.Window = window
@@ -52,7 +52,7 @@ class MainMenu:
         button = arcade.XYWH(x, y, 200, 80)
         arcade.draw_rect_filled(button, arcade.color.DARK_BLUE)
         arcade.draw_rect_outline(button, arcade.color.CYAN)
-        arcade.draw_text(
+        button_text = arcade.Text(
             text,
             x,
             y,
@@ -62,26 +62,29 @@ class MainMenu:
             anchor_x="center",
             anchor_y="center",
         )
+        button_text.draw()
 
     def draw_menu(self):
         x = self.window.width // 2
         arcade.draw_rect_outline(
             arcade.XYWH(
                 self.window.width // 2,
-                (self.window.height // 2) - 100,
-                450,
-                800,
+                (self.window.height // 2),
+                600,
+                700,
             ),
-            arcade.color.DARK_BLUE,
+            (00, 79, 79, 200),
         )
-        arcade.draw_lrbt_rectangle_filled(
-            (self.window.width // 2) - 225,
-            (self.window.width // 2) + 225,
-            (self.window.height // 2) - 500,
-            (self.window.height // 2) + 300,
-            (0, 0, 0, 150),
+        arcade.draw_rect_filled(
+            arcade.XYWH(
+                self.window.width // 2,
+                (self.window.height // 2),
+                600,
+                700,
+            ),
+            (33, 33, 33, 150),
         )
-        arcade.draw_text(
+        logo = arcade.Text(
             "Pac-man",
             x,
             self.window.height - 300,
@@ -91,9 +94,10 @@ class MainMenu:
             anchor_x="center",
             anchor_y="center",
         )
+        logo.draw()
         for idx, title in enumerate(self.menu_list):
-            self.button(x, 500 - (idx * 100), title.upper())
-        selector_rect = arcade.XYWH(x - 180, 500 - self.gap, 40, 40)
+            self.button(x, 600 - (idx * 100), title.upper())
+        selector_rect = arcade.XYWH(x - 180, 600 - self.gap, 40, 40)
         arcade.draw_texture_rect(self.selector, selector_rect)
 
 

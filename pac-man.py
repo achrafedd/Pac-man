@@ -2,6 +2,7 @@ from typing import Any
 
 import arcade
 
+from GameOver import GameOver
 from GameView import GameView
 from LeaderBoard import LeaderBoard
 from Maze import Maze
@@ -25,13 +26,17 @@ class Pacman(arcade.Window):
         self.game: GameView = GameView(self.maze, self.menu, config, self)
         self.leaderboard: LeaderBoard = LeaderBoard("leaderboard.json", self)
         self.pause: PauseMenu = PauseMenu(self)
-        self.stat: Stats = Stats.MAIN_MENU
+        self.game_over: GameOver = GameOver(
+            config["highscore_filename"], self.game.player.score, self
+        )
+        self.stat: Stats = Stats.GAME_OVER
 
     def on_update(self, delta_time: float) -> None:
         if self.stat == Stats.GAME_VIEW:
             self.game.on_update(delta_time)
 
     def on_draw(self) -> None:
+        self.clear()
         if self.stat == Stats.MAIN_MENU:
             del self.maze
             self.maze = Maze(
@@ -48,9 +53,12 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.GAME_VIEW:
             self.game.on_draw()
         elif self.stat == Stats.LEADERBOARD:
+            self.leaderboard.leader_board = self.leaderboard.readfile()
             self.leaderboard.on_draw()
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_draw()
+        elif self.stat == Stats.GAME_OVER:
+            self.game_over.on_draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if self.stat == Stats.MAIN_MENU:
@@ -61,18 +69,20 @@ class Pacman(arcade.Window):
             self.leaderboard.on_key_press(symbol, modifiers)
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.GAME_OVER:
+            self.game_over.on_key_press(symbol, modifiers)
 
 
 if __name__ == "__main__":
-    try:
-        file = take_arges()
-        data = check_file(file)
-        config: Any = parse_json(data)
-        config: dict[Any, Any] = check_config_values(config)
+    # try:
+    file = take_arges()
+    data = check_file(file)
+    config: Any = parse_json(data)
+    config: dict[Any, Any] = check_config_values(config)
 
-        arcade.load_font("assets/fonts/Pacmania.ttf")
-        arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
-        _ = Pacman(config, True)
-        arcade.run()
-    except Exception as e:
-        print(f"Error: {e}")
+    arcade.load_font("assets/fonts/Pacmania.ttf")
+    arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
+    _ = Pacman(config, True)
+    arcade.run()
+# except Exception as e:
+#    print(f"Error: {e}")
