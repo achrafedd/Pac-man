@@ -64,15 +64,15 @@ class Pacman(arcade.Window):
 
 
 if __name__ == "__main__":
-    # try:
-    file = take_arges()
-    data = check_file(file)
-    config: Any = parse_json(data)
-    config: dict[Any, Any] = check_config_values(config)
+    try:
+        file = take_arges()
+        data = check_file(file)
+        config: Any = parse_json(data)
+        config: dict[Any, Any] = check_config_values(config)
 
-    arcade.load_font("assets/fonts/Pacmania.ttf")
-    arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
-    Pacman(config, True)
-    arcade.run()
-# except Exception as e:
-#    print(f"Error: {e}")
+        arcade.load_font("assets/fonts/Pacmania.ttf")
+        arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
+        _ = Pacman(config, True)
+        arcade.run()
+    except Exception as e:
+        print(f"Error: {e}")

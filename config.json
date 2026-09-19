@@ -1,7 +1,13 @@
 {
     "highscore_filename": 4738294,
-    "width": 20,
-    "height": 15,
+    "levels": [
+      {"width": 10, "height": 10},
+      {"width": 20, "height": 20},
+      {"width": 15, "height": 15},
+      {"width": 18, "height": 18},
+      {"width": 30, "height": 20},
+      {"width": 25, "height": 20}
+    ],
     "lives": 3,
     "pacgum": 42,
     "points_per_pacgum": 10,
