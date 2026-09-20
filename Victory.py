@@ -90,13 +90,13 @@ class Victory:
         if symbol == arcade.key.ENTER:
             self._save_score()
 
-    def _save_score(self):
+    def _save_score(self) -> None:
         with open(self.file) as file:
             data: LeaderBoardSchema = LeaderBoardSchema(
                 name=self.name, score=self.score
             )
             try:
-                res: list[LeaderBoardSchema] = json.load(file)
+                res = json.load(file)
             except json.JSONDecodeError:
                 res = []
             res.append(data.model_dump())

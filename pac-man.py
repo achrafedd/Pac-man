@@ -16,7 +16,7 @@ class Pacman(arcade.Window):
         super().__init__(fullscreen=fullscreen)
         self.__config: Config = config
         self.menu: MainMenu = MainMenu(self)
-        self.current_level: int = len(config.levels) - 1
+        self.current_level: int = len(config.levels)
         self.mazes: list[Maze] = [
             Maze(
                 config.levels[i]["width"],
@@ -38,12 +38,12 @@ class Pacman(arcade.Window):
         self.pause: PauseMenu = PauseMenu(self)
         self.game_over: GameOver = GameOver(
             config.highscore_filename,
-            self.games[self.current_level - 1].player.score,
+            0,
             self,
         )
         self.victory: Victory = Victory(
             config.highscore_filename,
-            self.games[self.current_level - 1].player.score,
+            0,
             self,
         )
         self.stat: Stats = Stats.MAIN_MENU
@@ -68,7 +68,7 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.GAME_OVER:
             self.game_over.on_draw()
         elif self.stat == Stats.VICTORY:
-            self.game_over.on_draw()
+            self.victory.on_draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if self.stat == Stats.MAIN_MENU:
@@ -80,7 +80,13 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_key_press(symbol, modifiers)
         elif self.stat == Stats.GAME_OVER:
+            self.game_over.score = sum(
+                game.player.score for game in self.games
+            )
             self.game_over.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.VICTORY:
+            self.victory.score = sum(game.player.score for game in self.games)
+            self.victory.on_key_press(symbol, modifiers)
 
     def _skip_level(self) -> None:
         if not any(
