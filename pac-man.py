@@ -8,26 +8,33 @@ from LeaderBoard import LeaderBoard
 from Maze import Maze
 from Menu import MainMenu, PauseMenu
 from parser import check_config_values, check_file, parse_json, take_arges
-from utils import Stats
+from utils import Config, Stats
 
 
 class Pacman(arcade.Window):
-    def __init__(self, config: dict, fullscreen: bool = False) -> None:
+    def __init__(self, config: Config, fullscreen: bool = False) -> None:
         super().__init__(fullscreen=fullscreen)
-        self.__config: dict = config
-        self.maze: Maze = Maze(
-            config["width"],
-            config["height"],
-            config["seed"],
-            self.width,
-            self.height,
-        )
+        self.__config: Config = config
         self.menu: MainMenu = MainMenu(config, self)
-        self.game: GameView = GameView(self.maze, self.menu, config, self)
+        self.current_level: int = 1
+        self.mazes: list[Maze] = [
+            Maze(
+                config.levels[i]["width"],
+                config.levels[i]["height"],
+                config.seed,
+                self.width,
+                self.height,
+            )
+            for i in range(len(config.levels))
+        ]
+        self.games: list[GameView] = [
+            GameView(self.maze[i], self.menu, self)
+            for i in range(len(config.levels))
+        ]
         self.leaderboard: LeaderBoard = LeaderBoard("leaderboard.json", self)
         self.pause: PauseMenu = PauseMenu(self)
         self.game_over: GameOver = GameOver(
-            config["highscore_filename"], self.game.player.score, self
+            config.highscore_filename, self.game.player.score, self
         )
         self.stat: Stats = Stats.GAME_OVER
 
@@ -38,20 +45,10 @@ class Pacman(arcade.Window):
     def on_draw(self) -> None:
         self.clear()
         if self.stat == Stats.MAIN_MENU:
-            del self.maze
-            self.maze = Maze(
-                self.__config["width"],
-                self.__config["height"],
-                self.__config["seed"],
-                self.width,
-                self.height,
-            )
-            self.game: GameView = GameView(
-                self.maze, self.menu, self.__config, self
-            )
+            self.mazes[self.current_level - 1].init_gums()
             self.menu.on_draw()
         elif self.stat == Stats.GAME_VIEW:
-            self.game.on_draw()
+            self.games[self.current_level - 1].on_draw()
         elif self.stat == Stats.LEADERBOARD:
             self.leaderboard.leader_board = self.leaderboard.readfile()
             self.leaderboard.on_draw()
@@ -64,7 +61,7 @@ class Pacman(arcade.Window):
         if self.stat == Stats.MAIN_MENU:
             self.menu.on_key_press(symbol, modifiers)
         elif self.stat == Stats.GAME_VIEW:
-            self.game.on_key_press(symbol, modifiers)
+            self.games[self.current_level - 1].on_key_press(symbol, modifiers)
         elif self.stat == Stats.LEADERBOARD:
             self.leaderboard.on_key_press(symbol, modifiers)
         elif self.stat == Stats.PAUSE_MENU:

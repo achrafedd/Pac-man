@@ -1,5 +1,3 @@
-from typing import Any
-
 import arcade
 
 from Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
@@ -15,7 +13,6 @@ class GameView:
         self,
         maze: Maze,
         main_menu: MainMenu,
-        config: dict[Any, Any],
         window: arcade.Window,
     ) -> None:
         super().__init__()
@@ -25,7 +22,6 @@ class GameView:
         self.lives_remaining: int = 2
         self.level: int = 1
         self.time: int = 90
-        self.config: dict = config
         self.window: arcade.Window = window
         self.player: Player = Player((10, 10), self.maze)
         self.ghost_red: Red_Ghost = Red_Ghost(

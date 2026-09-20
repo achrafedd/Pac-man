@@ -48,7 +48,7 @@ def parse_json(data: str) -> Any:
 
 def check_config_values(config: dict) -> dict:
     default = {
-        "highscore_filename": "hello.json",
+        "highscore_filename": 132432413,
         "width": 15,
         "height": 15,
         "pacgum": 42,
