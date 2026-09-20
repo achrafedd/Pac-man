@@ -2,20 +2,25 @@ import arcade
 from arcade.types import Color
 from abc import ABC, abstractmethod
 from Maze import Maze
+from Player import Player
 
 
 class Ghost(ABC):
-    def __init__(self, cordinates: tuple[int, int], maze: Maze, color: Color, player) -> None:
+    def __init__(
+        self, cordinates: tuple[int, int], maze: Maze, color: Color, player
+    ) -> None:
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
         self.color: Color = color
         self.fear: bool = False
         self.maze: Maze = maze
         self.size: float = maze.size // 2
-        self.player = player
-        self.pixel_x, self.pixel_y = maze.grid_to_pixel(self.x, self.y, maze.size)
+        self.player: Player = player
+        self.pixel_x, self.pixel_y = maze.grid_to_pixel(
+            self.x, self.y, maze.size
+        )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
-        self.speed : int = 4
+        self.speed: int = 4
 
     def update(self, delta_time: float) -> None:
         if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
@@ -25,7 +30,7 @@ class Ghost(ABC):
         step /= 1.5
         dx = self.target_x - self.pixel_x
         dy = self.target_y - self.pixel_y
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = (dx**2 + dy**2) ** 0.5
 
         if distance <= step or distance == 0:
             self.pixel_x = self.target_x
@@ -37,7 +42,7 @@ class Ghost(ABC):
     @abstractmethod
     def get_path(self):
         pass
-    
+
     @abstractmethod
     def draw(self):
         if self.fear:
@@ -55,25 +60,57 @@ class Ghost(ABC):
         black_size = self.size * 0.1
         ayse_gap = self.size * 0.25
         if self.fear:
-            arcade.draw_circle_filled(x + ayse_gap, y, ayse_size, (255, 255, 0))
-            arcade.draw_circle_filled(x - ayse_gap, y, ayse_size, (255, 255, 0))
+            arcade.draw_circle_filled(
+                x + ayse_gap, y, ayse_size, (255, 255, 0)
+            )
+            arcade.draw_circle_filled(
+                x - ayse_gap, y, ayse_size, (255, 255, 0)
+            )
         else:
-            arcade.draw_circle_filled(x + ayse_gap, y, ayse_size, (255, 255, 255))
+            arcade.draw_circle_filled(
+                x + ayse_gap, y, ayse_size, (255, 255, 255)
+            )
             arcade.draw_circle_filled(x + ayse_gap, y, black_size, (0, 0, 0))
-            arcade.draw_circle_filled(x - ayse_gap, y, ayse_size, (255, 255, 255))
+            arcade.draw_circle_filled(
+                x - ayse_gap, y, ayse_size, (255, 255, 255)
+            )
             arcade.draw_circle_filled(x - ayse_gap, y, black_size, (0, 0, 0))
 
         # Draw mouth
         if self.fear:
-            arcade.draw_arc_outline(x - 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180)
-            arcade.draw_arc_outline(x, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180)
-            arcade.draw_arc_outline(x + 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180)
+            arcade.draw_arc_outline(
+                x - 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+            )
+            arcade.draw_arc_outline(
+                x, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+            )
+            arcade.draw_arc_outline(
+                x + 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+            )
 
         # Draw leges
         leg_width = self.size // 3
-        arcade.draw_arc_filled(x - leg_width, y - height + 1, leg_width, leg_width, self.color, 180, 360)
-        arcade.draw_arc_filled(x, y - height + 1, leg_width, leg_width, self.color, 180, 360)
-        arcade.draw_arc_filled(x + leg_width, y - height + 1, leg_width, leg_width, self.color, 180, 360)
+        arcade.draw_arc_filled(
+            x - leg_width,
+            y - height + 1,
+            leg_width,
+            leg_width,
+            self.color,
+            180,
+            360,
+        )
+        arcade.draw_arc_filled(
+            x, y - height + 1, leg_width, leg_width, self.color, 180, 360
+        )
+        arcade.draw_arc_filled(
+            x + leg_width,
+            y - height + 1,
+            leg_width,
+            leg_width,
+            self.color,
+            180,
+            360,
+        )
 
     @abstractmethod
     def move(self) -> None:
@@ -124,7 +161,9 @@ class Red_Ghost(Ghost):
         if len(path) < 2:
             return
         self.y, self.x = path[1]
-        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
+        self.target_x, self.target_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
 
 
 class Pink_Ghost(Ghost):
@@ -133,7 +172,6 @@ class Pink_Ghost(Ghost):
 
     def draw(self):
         return super().draw()
-
 
     def get_path(self):
         x_player = self.player.x
@@ -177,20 +215,21 @@ class Pink_Ghost(Ghost):
         path.reverse()
         return path
 
-
-
     def move(self):
         path = self.get_path()
         if len(path) < 2:
             return
         self.y, self.x = path[1]
-        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
+        self.target_x, self.target_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+
 
 class Orange_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
         self.raduis = 5
-    
+
     def draw(self):
         return super().draw()
 
@@ -223,7 +262,9 @@ class Orange_Ghost(Ghost):
         return path
 
     def move(self):
-        if (self.x-self.player.x)**2 + (self.y-self.player.y)**2 <= self.raduis**2:
+        if (self.x - self.player.x) ** 2 + (
+            self.y - self.player.y
+        ) ** 2 <= self.raduis**2:
             home = self.get_path((self.maze.height - 1, 0))
             if len(home) < 2:
                 return
@@ -232,11 +273,13 @@ class Orange_Ghost(Ghost):
             path = self.get_path((self.player.y, self.player.x))
             if len(path) < 2:
                 return
-            self.y , self.x = path[1]
+            self.y, self.x = path[1]
 
-        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
-        
-    
+        self.target_x, self.target_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+
+
 class Blue_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player, red_ghost: Red_Ghost):
         super().__init__(cordinates, maze, color, player)
@@ -285,7 +328,7 @@ class Blue_Ghost(Ghost):
 
         goal = (
             2 * ahead[0] - self.red_ghost.y,
-            2 * ahead[1] - self.red_ghost.x
+            2 * ahead[1] - self.red_ghost.x,
         )
 
         goal = (
@@ -298,4 +341,7 @@ class Blue_Ghost(Ghost):
             return
 
         self.y, self.x = path[1]
-        self.target_x, self.target_y = self.maze.grid_to_pixel(self.x, self.y, self.maze.size)
+        self.target_x, self.target_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+

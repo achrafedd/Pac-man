@@ -7,7 +7,7 @@ from utils import Stats
 
 
 class MainMenu:
-    def __init__(self, config: dict[Any, Any], window: arcade.Window):
+    def __init__(self, window: arcade.Window):
         super().__init__()
         self.menu_list: dict[str, Stats] = {
             "start game": Stats.GAME_VIEW,
@@ -32,7 +32,7 @@ class MainMenu:
         arcade.draw_texture_rect(self.background, self.bg_rect)
         self.draw_menu()
 
-    def on_key_press(self, symbol: int, modifiers):
+    def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:

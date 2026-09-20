@@ -5,12 +5,13 @@ from Maze import Maze
 
 from Menu import MainMenu
 from Player import Direction, Player
-from utils import Stats
+from utils import Config, Stats
 
 
 class GameView:
     def __init__(
         self,
+        config: Config,
         maze: Maze,
         main_menu: MainMenu,
         window: arcade.Window,
@@ -18,12 +19,11 @@ class GameView:
         super().__init__()
         self.maze: Maze = maze
         self.main_menu: MainMenu = main_menu
-        self.lives: int = 3
-        self.lives_remaining: int = 2
-        self.level: int = 1
-        self.time: int = 90
+        self.config: Config = config
+        self.lives_remaining: int = config.lives
+        self.time: int = config.level_max_time
         self.window: arcade.Window = window
-        self.player: Player = Player((10, 10), self.maze)
+        self.player: Player = Player((3, 3), self.maze)
         self.ghost_red: Red_Ghost = Red_Ghost(
             (0, 1), self.maze, arcade.color.RED, self.player
         )
@@ -73,7 +73,7 @@ class GameView:
 
     def on_draw(self) -> None:
         arcade.draw_texture_rect(self.bg, self.bg_rect)
-        self.maze.draw(self.window.width, self.window.height)
+        self.maze.draw()
         self.player.draw()
         self.ghost_red.draw()
         self.ghost_blue.draw()
@@ -118,9 +118,9 @@ class GameView:
         rect = arcade.XYWH(
             0, self.window.height - 80, self.window.width, 80, arcade.Vec2()
         )
-        arcade.draw_rect_filled(rect, (33, 33, 33))
-        for i in range(self.lives):
-            if i + 1 >= self.lives_remaining:
+        arcade.draw_rect_filled(rect, (33, 33, 33, 180))
+        for i in range(self.config.lives):
+            if i < self.lives_remaining:
                 color = (250, 226, 81)
             else:
                 color = (250, 226, 81, 150)
@@ -140,7 +140,7 @@ class GameView:
         )
         score.draw()
         level = arcade.Text(
-            f"Level: {self.level}",
+            f"Level: {self.window.current_level}",
             self.window.width * 0.60,
             self.window.height - 40,
             anchor_x="center",
