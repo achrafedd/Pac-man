@@ -17,7 +17,6 @@ class Config(BaseModel):
     highscore_filename: str = "leaderboard.json"
     levels: list[dict[str, int]] = [{"width": 42, "height": 42}]
     lives: int = 3
-    pacgum: int = 42
     points_per_pacgum: int = 10
     points_per_super_pacgum: int = 50
     points_per_ghost: int = 200
@@ -65,6 +64,7 @@ class Config(BaseModel):
             raise ValueError(
                 f"The minimum time is 90 {self.level_max_time} is invalid"
             )
+        
         for level in self.levels:
             if level["width"] < 8 or level["height"] < 8:
                 raise ValueError("The minimum height and width is 8")
