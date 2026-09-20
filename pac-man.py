@@ -1,14 +1,15 @@
 from typing import Any
 
 import arcade
+from pydantic import ValidationError
 
 from GameOver import GameOver
 from GameView import GameView
 from LeaderBoard import LeaderBoard
 from Maze import Maze
 from Menu import MainMenu, PauseMenu
-from parser import check_config_values, check_file, parse_json, take_arges
-from utils import Config, Stats
+from utils import Stats, Config
+from parser import Parser
 
 
 class Pacman(arcade.Window):
@@ -71,15 +72,13 @@ class Pacman(arcade.Window):
 
 
 if __name__ == "__main__":
-    # try:
-    file = take_arges()
-    data = check_file(file)
-    config: Any = parse_json(data)
-    config: dict[Any, Any] = check_config_values(config)
-
-    arcade.load_font("assets/fonts/Pacmania.ttf")
-    arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
-    _ = Pacman(config, True)
-    arcade.run()
-# except Exception as e:
-#    print(f"Error: {e}")
+    try:
+        p = Parser()
+        arcade.load_font("assets/fonts/Pacmania.ttf")
+        arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
+        _ = Pacman(p.config, True)
+        arcade.run()
+    except ValidationError as e:
+        print("Error:", e.errors()[0]['msg'])
+    except BaseException as e:
+        print(f"Error: {e}")
