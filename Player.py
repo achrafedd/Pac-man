@@ -30,6 +30,7 @@ class Player:
         self.size: int = int(maze.size // 2)
         self.speed: int = 5
         self.score: int = 0
+        self.restart: bool = True
         self.directions: dict[str, tuple[int, int, int, int, int]] = {
             "right": (2, 1, 0, 30, 330),
             "down": (4, 0, 1, 300, 600),

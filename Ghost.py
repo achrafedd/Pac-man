@@ -184,13 +184,13 @@ class Pink_Ghost(Ghost):
         # 3 left
         # 0 up
         if self.player.dir == 1:
-            goal = (y_player, (x_player + 1) % self.maze.width - 1)
+            goal = (y_player, (x_player + 1) % (self.maze.width - 1))
         elif self.player.dir == 2:
-            goal = ((y_player + 1) % self.maze.height - 1, x_player)
+            goal = ((y_player + 1) % (self.maze.height - 1), x_player)
         elif self.player.dir == 3:
-            goal = (y_player, (x_player - 1) % self.maze.width - 1)
+            goal = (y_player, (x_player - 1) % (self.maze.width - 1))
         else:
-            goal = ((y_player - 1) % self.maze.height - 1, x_player)
+            goal = ((y_player - 1) % (self.maze.height - 1), x_player)
         queue = [start]
         visited = {start}
         parent = {}

@@ -25,7 +25,7 @@ class GameView:
         self.window: arcade.Window = window
         self.player: Player = Player((3, 3), self.maze)
         self.ghost_red: Red_Ghost = Red_Ghost(
-            (0, 1), self.maze, arcade.color.RED, self.player
+            (0, 0), self.maze, arcade.color.RED, self.player
         )
         self.ghost_blue: Blue_Ghost = Blue_Ghost(
             (self.maze.width - 1, self.maze.height - 1),
@@ -88,6 +88,18 @@ class GameView:
         self.ghost_blue.update(delta_time)
         self.ghost_pink.update(delta_time)
         self.ghost_orange.update(delta_time)
+        if self.game_over() and self.player.restart:
+            if self.lives_remaining == 0:
+                self.window.stat = Stats.GAME_OVER
+            else:
+                self.player.restart = False
+                self.lives_remaining -= 1
+                self.player.x, self.player.y = (3, 3)
+                self.ghost_blue.x, self.ghost_blue.y = (self.maze.width - 1, self.maze.height - 1)
+                self.ghost_red.x, self.ghost_red.y = (0, 0)
+                self.ghost_pink.x, self.ghost_pink.y = (self.maze.width - 1, 0)
+                self.ghost_orange.x, self.ghost_orange.y = (0, self.maze.height - 1)
+                self.player.restart = True
 
     def can_turn(self, x: float, y: float, direction: Direction):
         mask, _, _, _, _ = self.player.directions[direction.value]
