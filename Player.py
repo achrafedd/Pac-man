@@ -58,6 +58,14 @@ class Player:
             ee,
         )
 
+    def _restart(self) -> None:
+        self.direction = Direction.RIGHT
+        self.x, self.y = (3, 3)
+        self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
+            3, 3, self.maze.size
+        )
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
+
     def can_move(self, x: float, y: float, direction: Direction):
         mask, _, _, _, _ = self.directions[direction.value]
         return not self.maze.maze[y][x] & mask

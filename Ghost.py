@@ -1,3 +1,5 @@
+from turtle import width
+
 import arcade
 from arcade.types import Color
 from abc import ABC, abstractmethod
@@ -22,6 +24,10 @@ class Ghost(ABC):
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
         self.speed: int = 4
 
+    @abstractmethod
+    def _restart(self) -> None:
+        pass
+
     def update(self, delta_time: float) -> None:
         if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
             self.move()
@@ -43,7 +49,6 @@ class Ghost(ABC):
     def get_path(self):
         pass
 
-    @abstractmethod
     def draw(self):
         if self.fear:
             self.color = arcade.color.BLUE
@@ -121,8 +126,12 @@ class Red_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
 
-    def draw(self):
-        return super().draw()
+    def _restart(self) -> None:
+        self.x, self.y = (0, 0)
+        self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
+            0, 0, self.maze.size
+        )
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def get_path(self):
         x_player = self.player.x
@@ -169,6 +178,13 @@ class Red_Ghost(Ghost):
 class Pink_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player):
         super().__init__(cordinates, maze, color, player)
+
+    def _restart(self) -> None:
+        self.x, self.y = (self.maze.width - 1, 0)
+        self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self):
         return super().draw()
@@ -230,6 +246,13 @@ class Orange_Ghost(Ghost):
         super().__init__(cordinates, maze, color, player)
         self.raduis = 5
 
+    def _restart(self) -> None:
+        self.x, self.y = (0, self.maze.height - 1)
+        self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
+
     def draw(self):
         return super().draw()
 
@@ -284,6 +307,13 @@ class Blue_Ghost(Ghost):
     def __init__(self, cordinates, maze, color, player, red_ghost: Red_Ghost):
         super().__init__(cordinates, maze, color, player)
         self.red_ghost = red_ghost
+
+    def _restart(self) -> None:
+        self.x, self.y = (self.maze.height - 1, self.maze.height - 1)
+        self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+        )
+        self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self):
         return super().draw()
@@ -344,4 +374,3 @@ class Blue_Ghost(Ghost):
         self.target_x, self.target_y = self.maze.grid_to_pixel(
             self.x, self.y, self.maze.size
         )
-

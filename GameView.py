@@ -23,6 +23,9 @@ class GameView:
         self.lives_remaining: int = config.lives
         self.time: int = config.level_max_time
         self.window: arcade.Window = window
+        self.restart: bool = True
+        self.isCounting: bool = True
+        self.counter: float = 3
         self.player: Player = Player((3, 3), self.maze)
         self.ghost_red: Red_Ghost = Red_Ghost(
             (0, 0), self.maze, arcade.color.RED, self.player
@@ -80,26 +83,47 @@ class GameView:
         self.ghost_pink.draw()
         self.ghost_orange.draw()
         self._draw_hud()
+        if self.isCounting:
+            counter = arcade.Text(
+                str(int(self.counter)),
+                self.window.width // 2,
+                self.window.height // 2,
+                font_name="Press Start 2P",
+                font_size=30,
+                anchor_x="center",
+                anchor_y="center",
+            )
+            counter.draw()
+
+    def counting(self, delta_time: float) -> None:
+        self.counter -= delta_time
+        if self.counter < 0:
+            self.isCounting = False
+            self.restart = True
+            self.counter = 3
 
     def on_update(self, delta_time: float) -> None:
+        if self.isCounting:
+            self.counting(delta_time)
+            return
         self.player.d += 5 * delta_time
         self.player.update(delta_time)
         self.ghost_red.update(delta_time)
         self.ghost_blue.update(delta_time)
         self.ghost_pink.update(delta_time)
         self.ghost_orange.update(delta_time)
-        if self.game_over() and self.player.restart:
-            if self.lives_remaining == 0:
+        if self.game_over() and self.restart:
+            if self.lives_remaining == 1:
                 self.window.stat = Stats.GAME_OVER
             else:
-                self.player.restart = False
+                self.restart = False
                 self.lives_remaining -= 1
-                self.player.x, self.player.y = (3, 3)
-                self.ghost_blue.x, self.ghost_blue.y = (self.maze.width - 1, self.maze.height - 1)
-                self.ghost_red.x, self.ghost_red.y = (0, 0)
-                self.ghost_pink.x, self.ghost_pink.y = (self.maze.width - 1, 0)
-                self.ghost_orange.x, self.ghost_orange.y = (0, self.maze.height - 1)
-                self.player.restart = True
+                self.player._restart()
+                self.ghost_blue._restart()
+                self.ghost_red._restart()
+                self.ghost_pink._restart()
+                self.ghost_orange._restart()
+                self.isCounting = True
 
     def can_turn(self, x: float, y: float, direction: Direction):
         mask, _, _, _, _ = self.player.directions[direction.value]
