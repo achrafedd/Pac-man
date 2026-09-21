@@ -2,10 +2,10 @@ import json
 
 import arcade
 
-from utils import LeaderBoardSchema, Stats
+from .utils import LeaderBoardSchema, Stats
 
 
-class GameOver:
+class Victory:
     def __init__(self, file: str, score: int, window: arcade.Window) -> None:
         self.user_name: str = ""
         self.file: str = file
@@ -28,7 +28,7 @@ class GameOver:
         arcade.draw_rect_filled(rect, (00, 79, 79, 200))
         arcade.draw_rect_outline(rect, (250, 226, 81))
         head = arcade.Text(
-            "Game Over",
+            "Victory",
             self.window.width // 2,
             self.window.height // 2 + 200,
             anchor_x="center",
@@ -90,13 +90,13 @@ class GameOver:
         if symbol == arcade.key.ENTER:
             self._save_score()
 
-    def _save_score(self):
+    def _save_score(self) -> None:
         with open(self.file) as file:
             data: LeaderBoardSchema = LeaderBoardSchema(
                 name=self.name, score=self.score
             )
             try:
-                res: list[LeaderBoardSchema] = json.load(file)
+                res = json.load(file)
             except json.JSONDecodeError:
                 res = []
             res.append(data.model_dump())

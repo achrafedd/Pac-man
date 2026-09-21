@@ -1,14 +1,14 @@
 import arcade
 from pydantic import ValidationError
 
-from GameOver import GameOver
-from GameView import GameView
-from LeaderBoard import LeaderBoard
-from Maze import Maze
-from Menu import MainMenu, PauseMenu
-from Victory import Victory
-from utils import Stats, Config
-from parser import Parser
+from components import GameOver
+from components import GameView
+from components import LeaderBoard
+from components import Maze
+from components import MainMenu, PauseMenu
+from components import Victory
+from components import Stats, Config
+from components import Parser
 
 
 class Pacman(arcade.Window):

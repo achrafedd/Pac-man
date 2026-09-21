@@ -64,7 +64,6 @@ class Config(BaseModel):
             raise ValueError(
                 f"The minimum time is 90 {self.level_max_time} is invalid"
             )
-        
         for level in self.levels:
             if level["width"] < 8 or level["height"] < 8:
                 raise ValueError("The minimum height and width is 8")

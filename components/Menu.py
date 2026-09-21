@@ -1,9 +1,7 @@
-from typing import Any
-
 import arcade
 import cv2
 
-from utils import Stats
+from .utils import Stats
 
 
 class MainMenu:

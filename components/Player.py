@@ -3,7 +3,7 @@ from math import sin
 
 import arcade
 
-from Maze import Maze
+from .Maze import Maze
 
 
 class Direction(Enum):

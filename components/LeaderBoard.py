@@ -1,9 +1,8 @@
 import json
-from typing import Any
 
 import arcade
 
-from utils import LeaderBoardSchema, Stats
+from .utils import LeaderBoardSchema, Stats
 
 
 class LeaderBoard:

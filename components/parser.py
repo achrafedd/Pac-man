@@ -1,8 +1,8 @@
 import sys
 import json
 from typing import Any
-from errors import Parsing
-from utils import Config
+from .errors import Parsing
+from .utils import Config
 
 
 class Parser:

@@ -1,10 +1,8 @@
-from turtle import width
-
 import arcade
 from arcade.types import Color
 from abc import ABC, abstractmethod
-from Maze import Maze
-from Player import Player
+from .Maze import Maze
+from .Player import Player
 
 
 class Ghost(ABC):

@@ -3,7 +3,7 @@ from enum import Enum
 import arcade
 from mazegenerator import MazeGenerator
 
-from utils import Config
+from .utils import Config
 
 
 class Direction(Enum):

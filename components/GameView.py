@@ -1,11 +1,11 @@
 import arcade
 
-from Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
-from Maze import Maze
+from .Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
+from .Maze import Maze
 
-from Menu import MainMenu
-from Player import Direction, Player
-from utils import Config, Stats
+from .Menu import MainMenu
+from .Player import Direction, Player
+from .utils import Config, Stats
 
 
 class GameView:
