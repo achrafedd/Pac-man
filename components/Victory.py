@@ -102,4 +102,5 @@ class Victory:
             res.append(data.model_dump())
         with open(self.file, "w") as file:
             json.dump(res, file, indent=4)
+            self.name = ""
             self.window.stat = Stats.MAIN_MENU

@@ -1,6 +1,5 @@
 import arcade
-
-from .Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost
+from .Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost, Ghost
 from .Maze import Maze
 
 from .Menu import MainMenu
@@ -51,25 +50,37 @@ class GameView:
             0, 0, window.width, window.height, arcade.Vec2()
         )
 
+    def _init_game(self):
+        self.lives_remaining = self.config.lives
+        self.time = self.config.level_max_time
+        self.isCounting = True
+        self.ghost_blue._restart()
+        self.ghost_red._restart()
+        self.ghost_orange._restart()
+        self.ghost_pink._restart()
+        self.player._restart()
+
+
+    def _distance(self, player: Player, ghost: Ghost):
+        return ((ghost.pixel_x - player.pixel_x)**2 + (ghost.pixel_y - player.pixel_y)**2)**(1/2) 
+
+
     def game_over(self) -> bool:
+        distance = ((self.ghost_red.pixel_x - self.player.pixel_x)**2 + (self.ghost_red.pixel_y - self.player.pixel_y)**2)**(1/2)
         if (
-            self.player.x == self.ghost_red.x
-            and self.player.y == self.ghost_red.y
+            self._distance(self.player, self.ghost_red)<= 30
+            ):
+            return True
+        if (
+            self._distance(self.player, self.ghost_blue)<= 30
         ):
             return True
         if (
-            self.player.x == self.ghost_blue.x
-            and self.player.y == self.ghost_blue.y
+            self._distance(self.player, self.ghost_pink)<= 30
         ):
             return True
         if (
-            self.player.x == self.ghost_pink.x
-            and self.player.y == self.ghost_pink.y
-        ):
-            return True
-        if (
-            self.player.x == self.ghost_orange.x
-            and self.player.y == self.ghost_orange.y
+            self._distance(self.player, self.ghost_orange)<= 30
         ):
             return True
         return False
@@ -125,9 +136,6 @@ class GameView:
                 self.ghost_orange._restart()
                 self.isCounting = True
 
-    def can_turn(self, x: float, y: float, direction: Direction):
-        mask, _, _, _, _ = self.player.directions[direction.value]
-        return not self.maze.maze[y][x] & mask
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:

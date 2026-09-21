@@ -56,7 +56,11 @@ class Pacman(arcade.Window):
     def on_draw(self) -> None:
         self.clear()
         if self.stat == Stats.MAIN_MENU:
-            self.mazes[self.current_level - 1].init_gums()
+            self.current_level = 1
+            for maze in self.mazes:
+                maze.init_gums()
+            for game in self.games:
+                game._init_game()
             self.menu.on_draw()
         elif self.stat == Stats.GAME_VIEW:
             self.games[self.current_level - 1].on_draw()
@@ -66,8 +70,10 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_draw()
         elif self.stat == Stats.GAME_OVER:
+            # self.game_over.name = ""
             self.game_over.on_draw()
         elif self.stat == Stats.VICTORY:
+            # self.victory.name = ""
             self.victory.on_draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
