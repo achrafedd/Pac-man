@@ -108,13 +108,13 @@ class Pacman(arcade.Window):
 
 
 if __name__ == "__main__":
-    try:
-        p = Parser()
-        arcade.load_font("assets/fonts/Pacmania.ttf")
-        arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
-        _ = Pacman(p.config, True)
-        arcade.run()
-    except ValidationError as e:
-        print("Error:", e.errors()[0]["msg"])
-    except BaseException as e:
-        print(f"Error: {e}")
+    p = Parser()
+    arcade.load_font("assets/fonts/Pacmania.ttf")
+    arcade.load_font("assets/fonts/PressStart2P-Regular.ttf")
+    _ = Pacman(p.config, True)
+    arcade.run()
+    # try:
+    # except ValidationError as e:
+    #     print("Error:", e.errors()[0]["msg"])
+    # except BaseException as e:
+    #     print(f"Error: {e}")

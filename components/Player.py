@@ -31,6 +31,7 @@ class Player:
         self.speed: int = 5
         self.score: int = 0
         self.restart: bool = True
+        self.cheat_mode: bool = False
         self.directions: dict[str, tuple[int, int, int, int, int]] = {
             "right": (2, 1, 0, 30, 330),
             "down": (4, 0, 1, 300, 600),

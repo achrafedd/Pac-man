@@ -26,6 +26,14 @@ class GameView:
         self.isCounting: bool = True
         self.counter: float = 3
         self.player: Player = Player((3, 3), self.maze)
+        self.left_top_flag: bool = True
+        self.right_top_flag: bool = True
+        self.left_down_flag: bool = True
+        self.right_down_flag: bool = True
+        self.super_power: bool = False
+        self.run_time: int = 6
+
+
         self.ghost_red: Red_Ghost = Red_Ghost(
             (0, 0), self.maze, arcade.color.RED, self.player
         )
@@ -67,11 +75,11 @@ class GameView:
         ) ** (1 / 2)
 
     def game_over(self) -> bool:
-        distance = (
-            (self.ghost_red.pixel_x - self.player.pixel_x) ** 2
-            + (self.ghost_red.pixel_y - self.player.pixel_y) ** 2
-        ) ** (1 / 2)
-        if self._distance(self.player, self.ghost_red) <= 30:
+        if (self.super_power or self.player.cheat_mode):
+            return False
+        if (
+            self._distance(self.player, self.ghost_red)<= 30
+            ):
             return True
         if self._distance(self.player, self.ghost_blue) <= 30:
             return True
@@ -109,6 +117,42 @@ class GameView:
             self.restart = True
             self.counter = 3
 
+    def super_gum(self):
+        if self.maze.gums[0][0] == 0 and self.left_top_flag:
+            self.run_time = 6
+            self.left_top_flag = False
+            self.super_power = True
+            self.ghost_blue.fear = True
+            self.ghost_red.fear = True
+            self.ghost_orange.fear = True
+            self.ghost_pink.fear = True
+        elif self.maze.gums[self.maze.height - 1][0] == 0 and self.left_down_flag:
+            self.run_time = 6
+            self.left_down_flag = False
+            self.super_power = True
+            self.ghost_blue.fear = True
+            self.ghost_red.fear = True
+            self.ghost_orange.fear = True
+            self.ghost_pink.fear = True
+        elif self.maze.gums[0][self.maze.width - 1] == 0 and self.right_top_flag:
+            self.run_time = 6
+            self.right_top_flag = False
+            self.super_power = True
+            self.ghost_blue.fear = True
+            self.ghost_red.fear = True
+            self.ghost_orange.fear = True
+            self.ghost_pink.fear = True
+        elif self.maze.gums[self.maze.height - 1][self.maze.width - 1] == 0 and self.right_down_flag:
+            self.run_time = 6
+            self.right_down_flag = False
+            self.super_power = True
+            self.ghost_blue.fear = True
+            self.ghost_red.fear = True
+            self.ghost_orange.fear = True
+            self.ghost_pink.fear = True
+            
+
+
     def on_update(self, delta_time: float) -> None:
         if self.isCounting:
             self.counting(delta_time)
@@ -131,6 +175,18 @@ class GameView:
                 self.ghost_pink._restart()
                 self.ghost_orange._restart()
                 self.isCounting = True
+        self.super_gum()
+        if self.super_power and self.run_time > 0:
+            self.run_time -= delta_time
+            if self.run_time <= 0:
+                self.super_power = False
+                self.ghost_blue.fear = False
+                self.ghost_red.fear = False
+                self.ghost_orange.fear = False
+                self.ghost_pink.fear = False
+                self.run_time = 6
+
+
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
@@ -154,6 +210,8 @@ class GameView:
             self.player.next_direction = Direction.LEFT
         if symbol == arcade.key.N:
             self.window.skip = True
+        if symbol == arcade.key.C:
+            self.player.cheat_mode = not self.player.cheat_mode
 
     def _draw_hud(self):
         rect = arcade.XYWH(

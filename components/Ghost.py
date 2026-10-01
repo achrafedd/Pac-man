@@ -3,7 +3,8 @@ from arcade.types import Color
 from abc import ABC, abstractmethod
 from .Maze import Maze
 from .Player import Player
-
+from typing import Tuple
+import random
 
 class Ghost(ABC):
     def __init__(
@@ -12,6 +13,7 @@ class Ghost(ABC):
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
         self.color: Color = color
+        self.init_color: Color = color
         self.fear: bool = False
         self.maze: Maze = maze
         self.size: float = maze.size // 2
@@ -19,16 +21,25 @@ class Ghost(ABC):
         self.pixel_x, self.pixel_y = maze.grid_to_pixel(
             self.x, self.y, maze.size
         )
+        self.home = (self.y, self.x)
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
         self.speed: int = 4
+        self.eated_time: float = 0
 
     @abstractmethod
     def _restart(self) -> None:
         pass
 
     def update(self, delta_time: float) -> None:
-        if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
+        if self.eated_time > 0:
+            self.eated_time -= delta_time
+            return
+        if self.pixel_x == self.target_x and self.pixel_y == self.target_y and not self.fear:
             self.move()
+        elif self.pixel_x == self.target_x and self.pixel_y == self.target_y and self.fear:
+            self.fear_mode()
+    
+        
 
         step = self.speed * self.maze.size * delta_time
         step /= 1.5
@@ -47,9 +58,20 @@ class Ghost(ABC):
     def get_path(self):
         pass
 
+    def _distance(self, player: Player):
+            return ((self.pixel_x - player.pixel_x)**2 + (self.pixel_y - player.pixel_y)**2)**(1/2)
+
     def draw(self):
+        if self.eated_time > 0:
+            return
+        if self._distance(self.player) <= 30 and not self.player.cheat_mode:
+            self.eated_time = 5
+            self._restart()
+            return
         if self.fear:
             self.color = arcade.color.BLUE
+        else:
+            self.color = self.init_color
         x, y = (self.pixel_x, self.pixel_y)
 
         # Draw Body
@@ -114,6 +136,52 @@ class Ghost(ABC):
             180,
             360,
         )
+
+    def shortest_distance(self, start: Tuple[int, int]):
+        queue = [start]
+        end = (self.player.y, self.player.x)
+        vis = {start}
+        parent = {}
+        while queue:
+            y, x = queue.pop(0)
+            curr = (y, x)
+            if curr == end:
+                break
+            for n in self.maze.get_neighbor(x, y):
+                if n not in vis:
+                    vis.add(n)
+                    queue.append(n)
+                    parent[n] = curr
+        path = []
+        curr = end
+        while curr != start:
+            path.append(curr)
+            curr = parent.get(curr, None)
+            if curr == None:
+                return []
+        path.append(start)
+        path.reverse()
+        return len(path)
+
+
+    def fear_mode(self) -> None:
+        neighbor = self.maze.get_neighbor(self.x, self.y)
+
+        best_distance = -1
+        best_path = []
+        for n in neighbor:
+            distance = self.shortest_distance(n)
+            if distance >= best_distance:
+                best_distance = distance
+                best_path.append(n)
+
+        move = random.choice(best_path)
+        self.y, self.x = move
+
+        self.target_x, self.target_y = self.maze.grid_to_pixel(
+            self.x, self.y, self.maze.size
+            )
+
 
     @abstractmethod
     def move(self) -> None:
