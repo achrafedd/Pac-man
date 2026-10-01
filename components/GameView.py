@@ -60,28 +60,24 @@ class GameView:
         self.ghost_pink._restart()
         self.player._restart()
 
-
     def _distance(self, player: Player, ghost: Ghost):
-        return ((ghost.pixel_x - player.pixel_x)**2 + (ghost.pixel_y - player.pixel_y)**2)**(1/2) 
-
+        return (
+            (ghost.pixel_x - player.pixel_x) ** 2
+            + (ghost.pixel_y - player.pixel_y) ** 2
+        ) ** (1 / 2)
 
     def game_over(self) -> bool:
-        distance = ((self.ghost_red.pixel_x - self.player.pixel_x)**2 + (self.ghost_red.pixel_y - self.player.pixel_y)**2)**(1/2)
-        if (
-            self._distance(self.player, self.ghost_red)<= 30
-            ):
+        distance = (
+            (self.ghost_red.pixel_x - self.player.pixel_x) ** 2
+            + (self.ghost_red.pixel_y - self.player.pixel_y) ** 2
+        ) ** (1 / 2)
+        if self._distance(self.player, self.ghost_red) <= 30:
             return True
-        if (
-            self._distance(self.player, self.ghost_blue)<= 30
-        ):
+        if self._distance(self.player, self.ghost_blue) <= 30:
             return True
-        if (
-            self._distance(self.player, self.ghost_pink)<= 30
-        ):
+        if self._distance(self.player, self.ghost_pink) <= 30:
             return True
-        if (
-            self._distance(self.player, self.ghost_orange)<= 30
-        ):
+        if self._distance(self.player, self.ghost_orange) <= 30:
             return True
         return False
 
@@ -136,7 +132,6 @@ class GameView:
                 self.ghost_orange._restart()
                 self.isCounting = True
 
-
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
             self.window.close()
@@ -157,6 +152,8 @@ class GameView:
         if symbol == arcade.key.LEFT:
             self.player.dir = 3
             self.player.next_direction = Direction.LEFT
+        if symbol == arcade.key.N:
+            self.window.skip = True
 
     def _draw_hud(self):
         rect = arcade.XYWH(

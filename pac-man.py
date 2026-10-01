@@ -17,6 +17,7 @@ class Pacman(arcade.Window):
         self.__config: Config = config
         self.menu: MainMenu = MainMenu(self)
         self.current_level: int = len(config.levels)
+        self.skip: bool = False
         self.mazes: list[Maze] = [
             Maze(
                 config.levels[i]["width"],
@@ -70,10 +71,8 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_draw()
         elif self.stat == Stats.GAME_OVER:
-            # self.game_over.name = ""
             self.game_over.on_draw()
         elif self.stat == Stats.VICTORY:
-            # self.victory.name = ""
             self.victory.on_draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
@@ -95,9 +94,13 @@ class Pacman(arcade.Window):
             self.victory.on_key_press(symbol, modifiers)
 
     def _skip_level(self) -> None:
-        if not any(
-            any(row) for row in self.mazes[self.current_level - 1].gums
+        if (
+            not any(
+                any(row) for row in self.mazes[self.current_level - 1].gums
+            )
+            or self.skip
         ):
+            self.skip = False
             self.current_level += 1
             if self.current_level > len(self.__config.levels):
                 self.current_level = 1
