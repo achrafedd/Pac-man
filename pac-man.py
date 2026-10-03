@@ -9,7 +9,7 @@ from components import MainMenu, PauseMenu
 from components import Victory
 from components import Stats, Config
 from components import Parser
-from components.instructions import Instructions
+from components import Instructions
 
 
 class Pacman(arcade.Window):
