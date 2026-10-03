@@ -54,3 +54,8 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.22.3",
+]
+

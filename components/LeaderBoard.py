@@ -23,11 +23,11 @@ class LeaderBoard:
 
     def readfile(self) -> list[LeaderBoardSchema] | None:
         data = {}
-        with open(self.file) as file:
-            try:
+        try:
+            with open(self.file) as file:
                 data = json.load(file)
-            except json.JSONDecodeError:
-                return None
+        except (json.JSONDecodeError, FileNotFoundError):
+            return None
 
         data = sorted(data, key=lambda x: x["score"], reverse=True)
         res = [LeaderBoardSchema(**el) for el in data]

@@ -9,14 +9,17 @@ from components import MainMenu, PauseMenu
 from components import Victory
 from components import Stats, Config
 from components import Parser
+from components.instructions import Instructions
 
 
 class Pacman(arcade.Window):
     def __init__(self, config: Config, fullscreen: bool = False) -> None:
         super().__init__(fullscreen=fullscreen)
-        self.__config: Config = config
+        self.con: Config = config
         self.menu: MainMenu = MainMenu(self)
         self.current_level: int = len(config.levels)
+        self.lives_remaining: int = config.lives
+        self.score: int = 0
         self.skip: bool = False
         self.mazes: list[Maze] = [
             Maze(
@@ -39,14 +42,15 @@ class Pacman(arcade.Window):
         self.pause: PauseMenu = PauseMenu(self)
         self.game_over: GameOver = GameOver(
             config.highscore_filename,
-            0,
+            self.score,
             self,
         )
         self.victory: Victory = Victory(
             config.highscore_filename,
-            0,
+            self.score,
             self,
         )
+        self.instructions: Instructions = Instructions(self)
         self.stat: Stats = Stats.MAIN_MENU
 
     def on_update(self, delta_time: float) -> None:
@@ -57,6 +61,7 @@ class Pacman(arcade.Window):
     def on_draw(self) -> None:
         self.clear()
         if self.stat == Stats.MAIN_MENU:
+            self.lives_remaining = self.con.lives
             self.current_level = 1
             for maze in self.mazes:
                 maze.init_gums()
@@ -71,9 +76,15 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_draw()
         elif self.stat == Stats.GAME_OVER:
+            self.game_over.score = self.score
             self.game_over.on_draw()
         elif self.stat == Stats.VICTORY:
+            self.victory.score = self.score
             self.victory.on_draw()
+        elif self.stat == Stats.INSTRUCTIONS:
+            self.instructions.on_draw()
+        elif self.stat == Stats.EXIT:
+            self.close()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if self.stat == Stats.MAIN_MENU:
@@ -85,12 +96,10 @@ class Pacman(arcade.Window):
         elif self.stat == Stats.PAUSE_MENU:
             self.pause.on_key_press(symbol, modifiers)
         elif self.stat == Stats.GAME_OVER:
-            self.game_over.score = sum(
-                game.player.score for game in self.games
-            )
             self.game_over.on_key_press(symbol, modifiers)
+        elif self.stat == Stats.INSTRUCTIONS:
+            self.instructions.on_key_press(symbol, modifiers)
         elif self.stat == Stats.VICTORY:
-            self.victory.score = sum(game.player.score for game in self.games)
             self.victory.on_key_press(symbol, modifiers)
 
     def _skip_level(self) -> None:
@@ -102,7 +111,7 @@ class Pacman(arcade.Window):
         ):
             self.skip = False
             self.current_level += 1
-            if self.current_level > len(self.__config.levels):
+            if self.current_level > len(self.con.levels):
                 self.current_level = 1
                 self.stat = Stats.VICTORY
 

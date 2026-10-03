@@ -6,6 +6,7 @@ from .Player import Player
 from typing import Tuple
 import random
 
+
 class Ghost(ABC):
     def __init__(
         self, cordinates: tuple[int, int], maze: Maze, color: Color, player
@@ -34,12 +35,18 @@ class Ghost(ABC):
         if self.eated_time > 0:
             self.eated_time -= delta_time
             return
-        if self.pixel_x == self.target_x and self.pixel_y == self.target_y and not self.fear:
+        if (
+            self.pixel_x == self.target_x
+            and self.pixel_y == self.target_y
+            and not self.fear
+        ):
             self.move()
-        elif self.pixel_x == self.target_x and self.pixel_y == self.target_y and self.fear:
+        elif (
+            self.pixel_x == self.target_x
+            and self.pixel_y == self.target_y
+            and self.fear
+        ):
             self.fear_mode()
-    
-        
 
         step = self.speed * self.maze.size * delta_time
         step /= 1.5
@@ -59,12 +66,16 @@ class Ghost(ABC):
         pass
 
     def _distance(self, player: Player):
-            return ((self.pixel_x - player.pixel_x)**2 + (self.pixel_y - player.pixel_y)**2)**(1/2)
+        return (
+            (self.pixel_x - player.pixel_x) ** 2
+            + (self.pixel_y - player.pixel_y) ** 2
+        ) ** (1 / 2)
 
     def draw(self):
         if self.eated_time > 0:
             return
         if self._distance(self.player) <= 30 and not self.player.cheat_mode:
+            self.player.window.score += self.player.window.con.points_per_ghost
             self.eated_time = 5
             self._restart()
             return
@@ -163,7 +174,6 @@ class Ghost(ABC):
         path.reverse()
         return len(path)
 
-
     def fear_mode(self) -> None:
         neighbor = self.maze.get_neighbor(self.x, self.y)
 
@@ -180,8 +190,7 @@ class Ghost(ABC):
 
         self.target_x, self.target_y = self.maze.grid_to_pixel(
             self.x, self.y, self.maze.size
-            )
-
+        )
 
     @abstractmethod
     def move(self) -> None:
@@ -193,6 +202,7 @@ class Red_Ghost(Ghost):
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
+        self.fear = False
         self.x, self.y = (0, 0)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
             0, 0, self.maze.size
@@ -246,6 +256,7 @@ class Pink_Ghost(Ghost):
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
+        self.fear = False
         self.x, self.y = (self.maze.width - 1, 0)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
             self.x, self.y, self.maze.size
@@ -313,6 +324,7 @@ class Orange_Ghost(Ghost):
         self.raduis = 5
 
     def _restart(self) -> None:
+        self.fear = False
         self.x, self.y = (0, self.maze.height - 1)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
             self.x, self.y, self.maze.size
@@ -375,6 +387,7 @@ class Blue_Ghost(Ghost):
         self.red_ghost = red_ghost
 
     def _restart(self) -> None:
+        self.fear = False
         self.x, self.y = (self.maze.height - 1, self.maze.height - 1)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
             self.x, self.y, self.maze.size

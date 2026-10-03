@@ -19,20 +19,18 @@ class GameView:
         self.maze: Maze = maze
         self.main_menu: MainMenu = main_menu
         self.config: Config = config
-        self.lives_remaining: int = config.lives
-        self.time: int = config.level_max_time
+        self.time: float = config.level_max_time
         self.window: arcade.Window = window
         self.restart: bool = True
         self.isCounting: bool = True
         self.counter: float = 3
-        self.player: Player = Player((3, 3), self.maze)
+        self.player: Player = Player((3, 3), self.maze, window)
         self.left_top_flag: bool = True
         self.right_top_flag: bool = True
         self.left_down_flag: bool = True
         self.right_down_flag: bool = True
         self.super_power: bool = False
         self.run_time: int = 6
-
 
         self.ghost_red: Red_Ghost = Red_Ghost(
             (0, 0), self.maze, arcade.color.RED, self.player
@@ -59,9 +57,15 @@ class GameView:
         )
 
     def _init_game(self):
-        self.lives_remaining = self.config.lives
         self.time = self.config.level_max_time
         self.isCounting = True
+        self.restart = True
+        self.left_top_flag = True
+        self.right_top_flag = True
+        self.left_down_flag = True
+        self.right_down_flag = True
+        self.super_power = False
+        self.run_time = 6
         self.ghost_blue._restart()
         self.ghost_red._restart()
         self.ghost_orange._restart()
@@ -75,11 +79,9 @@ class GameView:
         ) ** (1 / 2)
 
     def game_over(self) -> bool:
-        if (self.super_power or self.player.cheat_mode):
+        if self.super_power or self.player.cheat_mode:
             return False
-        if (
-            self._distance(self.player, self.ghost_red)<= 30
-            ):
+        if self._distance(self.player, self.ghost_red) <= 30:
             return True
         if self._distance(self.player, self.ghost_blue) <= 30:
             return True
@@ -98,6 +100,8 @@ class GameView:
         self.ghost_pink.draw()
         self.ghost_orange.draw()
         self._draw_hud()
+        if self.player.cheat_mode:
+            self._draw_cheat()
         if self.isCounting:
             counter = arcade.Text(
                 str(int(self.counter)),
@@ -126,7 +130,10 @@ class GameView:
             self.ghost_red.fear = True
             self.ghost_orange.fear = True
             self.ghost_pink.fear = True
-        elif self.maze.gums[self.maze.height - 1][0] == 0 and self.left_down_flag:
+        elif (
+            self.maze.gums[self.maze.height - 1][0] == 0
+            and self.left_down_flag
+        ):
             self.run_time = 6
             self.left_down_flag = False
             self.super_power = True
@@ -134,7 +141,9 @@ class GameView:
             self.ghost_red.fear = True
             self.ghost_orange.fear = True
             self.ghost_pink.fear = True
-        elif self.maze.gums[0][self.maze.width - 1] == 0 and self.right_top_flag:
+        elif (
+            self.maze.gums[0][self.maze.width - 1] == 0 and self.right_top_flag
+        ):
             self.run_time = 6
             self.right_top_flag = False
             self.super_power = True
@@ -142,7 +151,10 @@ class GameView:
             self.ghost_red.fear = True
             self.ghost_orange.fear = True
             self.ghost_pink.fear = True
-        elif self.maze.gums[self.maze.height - 1][self.maze.width - 1] == 0 and self.right_down_flag:
+        elif (
+            self.maze.gums[self.maze.height - 1][self.maze.width - 1] == 0
+            and self.right_down_flag
+        ):
             self.run_time = 6
             self.right_down_flag = False
             self.super_power = True
@@ -150,12 +162,15 @@ class GameView:
             self.ghost_red.fear = True
             self.ghost_orange.fear = True
             self.ghost_pink.fear = True
-            
-
 
     def on_update(self, delta_time: float) -> None:
         if self.isCounting:
             self.counting(delta_time)
+            return
+        if int(self.time) > 0:
+            self.time -= delta_time
+        else:
+            self.window.stat = Stats.GAME_OVER
             return
         self.player.d += 5 * delta_time
         self.player.update(delta_time)
@@ -164,11 +179,11 @@ class GameView:
         self.ghost_pink.update(delta_time)
         self.ghost_orange.update(delta_time)
         if self.game_over() and self.restart:
-            if self.lives_remaining == 1:
+            if self.window.lives_remaining == 1:
                 self.window.stat = Stats.GAME_OVER
             else:
                 self.restart = False
-                self.lives_remaining -= 1
+                self.window.lives_remaining -= 1
                 self.player._restart()
                 self.ghost_blue._restart()
                 self.ghost_red._restart()
@@ -185,8 +200,6 @@ class GameView:
                 self.ghost_orange.fear = False
                 self.ghost_pink.fear = False
                 self.run_time = 6
-
-
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
@@ -219,7 +232,7 @@ class GameView:
         )
         arcade.draw_rect_filled(rect, (33, 33, 33, 180))
         for i in range(self.config.lives):
-            if i < self.lives_remaining:
+            if i < self.window.lives_remaining:
                 color = (250, 226, 81)
             else:
                 color = (250, 226, 81, 150)
@@ -230,7 +243,7 @@ class GameView:
                 color,
             )
         score = arcade.Text(
-            f"Score: {self.player.score}",
+            f"Score: {self.window.score}",
             self.window.width * 0.40,
             self.window.height - 40,
             anchor_x="center",
@@ -248,7 +261,7 @@ class GameView:
         )
         level.draw()
         time = arcade.Text(
-            f"Time: {self.time}",
+            f"Time: {int(self.time)}",
             self.window.width * 0.80,
             self.window.height - 40,
             anchor_x="center",
@@ -256,3 +269,16 @@ class GameView:
             font_name="Press Start 2P",
         )
         time.draw()
+
+    def _draw_cheat(self):
+        txt = arcade.Text(
+            "Cheat Mode",
+            150,
+            self.window.height // 2,
+            anchor_x="center",
+            anchor_y="center",
+            color=arcade.color.RED,
+            font_name="Press Start 2P",
+            font_size=14,
+        )
+        txt.draw()

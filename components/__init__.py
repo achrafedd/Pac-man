@@ -6,6 +6,7 @@ from .Menu import MainMenu, PauseMenu
 from .Victory import Victory
 from .utils import Config, LeaderBoardSchema, Stats
 from .parser import Parser
+from .instructions import Instructions
 
 __all__ = [
     "GameView",
@@ -19,4 +20,5 @@ __all__ = [
     "Config",
     "Stats",
     "Parser",
+    "Instructions",
 ]

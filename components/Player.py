@@ -18,6 +18,7 @@ class Player:
         self,
         cordinates: tuple[int, int],
         maze: Maze,
+        window,
         direction: Direction = Direction.RIGHT,
     ) -> None:
         self.dir: int = 1
@@ -29,7 +30,7 @@ class Player:
         self.next_direction: Direction = direction
         self.size: int = int(maze.size // 2)
         self.speed: int = 5
-        self.score: int = 0
+        self.window: arcade.Window = window
         self.restart: bool = True
         self.cheat_mode: bool = False
         self.directions: dict[str, tuple[int, int, int, int, int]] = {
@@ -45,7 +46,7 @@ class Player:
 
     def draw(self) -> None:
         if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
-            self.score += self.maze.gums[self.y][self.x]
+            self.window.score += self.maze.gums[self.y][self.x]
             self.maze.gums[self.y][self.x] = 0
         se: float = self.directions[self.direction.value][3] + 20 * sin(self.d)
         ee: float = self.directions[self.direction.value][4] - 20 * sin(self.d)
