@@ -18,7 +18,7 @@ class Player:
         self,
         cordinates: tuple[int, int],
         maze: Maze,
-        window,
+        window: arcade.Window,
         direction: Direction = Direction.RIGHT,
     ) -> None:
         self.dir: int = 1
@@ -68,7 +68,7 @@ class Player:
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
-    def can_move(self, x: float, y: float, direction: Direction):
+    def can_move(self, x: float, y: float, direction: Direction) -> bool:
         mask, _, _, _, _ = self.directions[direction.value]
         return not self.maze.maze[y][x] & mask
 

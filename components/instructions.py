@@ -78,7 +78,7 @@ class Instructions:
             arcade.color.YELLOW,
         )
         self._draw_text(
-            "EAT SCARD (BLUE) GHOSTS",
+            "EAT SCARED (BLUE) GHOSTS",
             self.window.width // 2 - 250,
             self.window.height // 2,
             18,

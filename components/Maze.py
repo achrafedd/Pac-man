@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 import arcade
 from mazegenerator import MazeGenerator
@@ -23,7 +24,7 @@ class Maze:
         window_width: int,
         window_height: int,
     ) -> None:
-        self.maze: list[list[int]] = []
+        self.maze: Any = []
         self.config: Config = config
         self.gums: list[list[int]]
         self.width: int = width
@@ -91,7 +92,7 @@ class Maze:
         y: float = self.cy - row * tile_size + margin_y
         return x, y
 
-    def draw_cell(self, row_idx: int, col_idx: int, col: int):
+    def draw_cell(self, row_idx: int, col_idx: int, col: int) -> None:
         half = self.size // 2
         x, y = self.grid_to_pixel(col_idx, row_idx, self.size)
         rect = arcade.XYWH(x, y, self.size, self.size)

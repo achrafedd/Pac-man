@@ -6,7 +6,7 @@ from .utils import Config
 
 
 class Parser:
-    def __init__(self):
+    def __init__(self) -> None:
         file = self.take_arges()
         data = self.check_file(file)
         config = self.parse_json(data)

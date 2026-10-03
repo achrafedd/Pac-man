@@ -3,13 +3,16 @@ from arcade.types import Color
 from abc import ABC, abstractmethod
 from .Maze import Maze
 from .Player import Player
-from typing import Tuple
+from typing import Any, Tuple
 import random
 
 
 class Ghost(ABC):
     def __init__(
-        self, cordinates: tuple[int, int], maze: Maze, color: Color, player
+        self, cordinates: tuple[int, int],
+        maze: Maze,
+        color: Color,
+        player: Player
     ) -> None:
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
@@ -61,17 +64,13 @@ class Ghost(ABC):
             self.pixel_x += dx / distance * step
             self.pixel_y += dy / distance * step
 
-    @abstractmethod
-    def get_path(self):
-        pass
-
-    def _distance(self, player: Player):
+    def _distance(self, player: Player) -> Any:
         return (
             (self.pixel_x - player.pixel_x) ** 2
             + (self.pixel_y - player.pixel_y) ** 2
         ) ** (1 / 2)
 
-    def draw(self):
+    def draw(self) -> None:
         if self.eated_time > 0:
             return
         if self._distance(self.player) <= 30 and not self.player.cheat_mode:
@@ -148,11 +147,12 @@ class Ghost(ABC):
             360,
         )
 
-    def shortest_distance(self, start: Tuple[int, int]):
+    def shortest_distance(self, start: Tuple[int, int]) -> Any:
         queue = [start]
         end = (self.player.y, self.player.x)
         vis = {start}
         parent = {}
+        curr: Any
         while queue:
             y, x = queue.pop(0)
             curr = (y, x)
@@ -168,7 +168,7 @@ class Ghost(ABC):
         while curr != start:
             path.append(curr)
             curr = parent.get(curr, None)
-            if curr == None:
+            if curr is None:
                 return []
         path.append(start)
         path.reverse()
@@ -198,7 +198,12 @@ class Ghost(ABC):
 
 
 class Red_Ghost(Ghost):
-    def __init__(self, cordinates, maze, color, player):
+    def __init__(
+            self, cordinates: Tuple[int, int],
+            maze: Maze,
+            color: Color,
+            player: Player
+            ) -> None:
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
@@ -209,7 +214,7 @@ class Red_Ghost(Ghost):
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
-    def get_path(self):
+    def get_path(self) -> Any:
         x_player = self.player.x
         y_player = self.player.y
         x_ghost = self.x
@@ -219,6 +224,7 @@ class Red_Ghost(Ghost):
         queue = [start]
         visited = {start}
         parent = {}
+        curr: Any
         while queue:
             # print(queue)
             curr = queue.pop(0)
@@ -241,7 +247,7 @@ class Red_Ghost(Ghost):
         path.reverse()
         return path
 
-    def move(self):
+    def move(self) -> None:
         path = self.get_path()
         if len(path) < 2:
             return
@@ -252,7 +258,13 @@ class Red_Ghost(Ghost):
 
 
 class Pink_Ghost(Ghost):
-    def __init__(self, cordinates, maze, color, player):
+    def __init__(
+            self,
+            cordinates: Tuple[int, int],
+            maze: Maze,
+            color: Color,
+            player: Player
+            ) -> None:
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
@@ -263,19 +275,15 @@ class Pink_Ghost(Ghost):
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
-    def draw(self):
+    def draw(self) -> None:
         return super().draw()
 
-    def get_path(self):
+    def get_path(self) -> Any:
         x_player = self.player.x
         y_player = self.player.y
         x_ghost = self.x
         y_ghost = self.y
         start = (y_ghost, x_ghost)
-        # 1 right
-        # 2 down
-        # 3 left
-        # 0 up
         if self.player.dir == 1:
             goal = (y_player, (x_player + 1) % (self.maze.width - 1))
         elif self.player.dir == 2:
@@ -287,6 +295,7 @@ class Pink_Ghost(Ghost):
         queue = [start]
         visited = {start}
         parent = {}
+        curr: Any
         while queue:
             curr = queue.pop(0)
             if curr == goal:
@@ -308,7 +317,7 @@ class Pink_Ghost(Ghost):
         path.reverse()
         return path
 
-    def move(self):
+    def move(self) -> None:
         path = self.get_path()
         if len(path) < 2:
             return
@@ -319,7 +328,13 @@ class Pink_Ghost(Ghost):
 
 
 class Orange_Ghost(Ghost):
-    def __init__(self, cordinates, maze, color, player):
+    def __init__(
+            self,
+            cordinates: Tuple[int, int],
+            maze: Maze,
+            color: Color,
+            player: Player
+            ) -> None:
         super().__init__(cordinates, maze, color, player)
         self.raduis = 5
 
@@ -331,16 +346,17 @@ class Orange_Ghost(Ghost):
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
-    def draw(self):
+    def draw(self) -> None:
         return super().draw()
 
-    def get_path(self, goal):
+    def get_path(self, goal: tuple[int, int]) -> Any:
         x_ghost = self.x
         y_ghost = self.y
         start = (y_ghost, x_ghost)
         queue = [start]
         visited = {start}
         parent = {}
+        curr: Any
         while queue:
             curr = queue.pop(0)
             if curr == goal:
@@ -362,7 +378,7 @@ class Orange_Ghost(Ghost):
         path.reverse()
         return path
 
-    def move(self):
+    def move(self) -> None:
         if (self.x - self.player.x) ** 2 + (
             self.y - self.player.y
         ) ** 2 <= self.raduis**2:
@@ -382,7 +398,14 @@ class Orange_Ghost(Ghost):
 
 
 class Blue_Ghost(Ghost):
-    def __init__(self, cordinates, maze, color, player, red_ghost: Red_Ghost):
+    def __init__(
+            self,
+            cordinates: Tuple[int, int],
+            maze: Maze,
+            color: Color,
+            player: Player,
+            red_ghost: Red_Ghost
+            ) -> None:
         super().__init__(cordinates, maze, color, player)
         self.red_ghost = red_ghost
 
@@ -394,16 +417,17 @@ class Blue_Ghost(Ghost):
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
-    def draw(self):
+    def draw(self) -> None:
         return super().draw()
 
-    def get_path(self, goal):
+    def get_path(self, goal: tuple[int, int]) -> Any:
         x_ghost = self.x
         y_ghost = self.y
         start = (y_ghost, x_ghost)
         queue = [start]
         visited = {start}
         parent = {}
+        curr: Any
         while queue:
             curr = queue.pop(0)
             if curr == goal:
@@ -425,7 +449,7 @@ class Blue_Ghost(Ghost):
         path.reverse()
         return path
 
-    def move(self):
+    def move(self) -> None:
         if self.player.dir == 1:  # right
             ahead = (self.player.y, (self.player.x + 2) % self.maze.width)
         elif self.player.dir == 2:  # down

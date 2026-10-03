@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import arcade
 
@@ -10,7 +11,7 @@ class LeaderBoard:
         super().__init__()
         self.window: arcade.Window = window
         self.file: str = file
-        self.leader_board: list[LeaderBoardSchema] | None = self.readfile()
+        self.leader_board: Any = self.readfile()
         self.start: int = 0
         self.end: int = 10
         self.bg: arcade.Texture = arcade.load_texture("assets/background.jpeg")
@@ -21,8 +22,8 @@ class LeaderBoard:
             0, 0, window.width, window.height, arcade.Vec2()
         )
 
-    def readfile(self) -> list[LeaderBoardSchema] | None:
-        data = {}
+    def readfile(self) -> Any | None:
+        data: Any = {}
         try:
             with open(self.file) as file:
                 data = json.load(file)
@@ -33,7 +34,14 @@ class LeaderBoard:
         res = [LeaderBoardSchema(**el) for el in data]
         return res
 
-    def score_row(self, x: float, y: float, rank: int, name: str, score: int):
+    def score_row(
+            self,
+            x: float,
+            y: float,
+            rank: int,
+            name: str,
+            score: int
+            ) -> None:
         rect = arcade.XYWH(x - 300, y, 50, 50)
         if rank == 1:
             arcade.draw_texture_rect(self.crown, rect)
@@ -113,7 +121,7 @@ class LeaderBoard:
             return
 
         for idx, element in enumerate(
-            self.leader_board[self.start : self.end], start=1
+            self.leader_board[self.start: self.end], start=1
         ):
             self.score_row(
                 x,

@@ -1,3 +1,5 @@
+from typing import Any
+
 import arcade
 from .Ghost import Red_Ghost, Blue_Ghost, Orange_Ghost, Pink_Ghost, Ghost
 from .Maze import Maze
@@ -30,7 +32,7 @@ class GameView:
         self.left_down_flag: bool = True
         self.right_down_flag: bool = True
         self.super_power: bool = False
-        self.run_time: int = 6
+        self.run_time: Any = 6
 
         self.ghost_red: Red_Ghost = Red_Ghost(
             (0, 0), self.maze, arcade.color.RED, self.player
@@ -56,7 +58,7 @@ class GameView:
             0, 0, window.width, window.height, arcade.Vec2()
         )
 
-    def _init_game(self):
+    def _init_game(self) -> None:
         self.time = self.config.level_max_time
         self.isCounting = True
         self.restart = True
@@ -72,7 +74,7 @@ class GameView:
         self.ghost_pink._restart()
         self.player._restart()
 
-    def _distance(self, player: Player, ghost: Ghost):
+    def _distance(self, player: Player, ghost: Ghost) -> Any:
         return (
             (ghost.pixel_x - player.pixel_x) ** 2
             + (ghost.pixel_y - player.pixel_y) ** 2
@@ -121,7 +123,7 @@ class GameView:
             self.restart = True
             self.counter = 3
 
-    def super_gum(self):
+    def super_gum(self) -> None:
         if self.maze.gums[0][0] == 0 and self.left_top_flag:
             self.run_time = 6
             self.left_top_flag = False
@@ -226,11 +228,12 @@ class GameView:
         if symbol == arcade.key.C:
             self.player.cheat_mode = not self.player.cheat_mode
 
-    def _draw_hud(self):
+    def _draw_hud(self) -> None:
         rect = arcade.XYWH(
             0, self.window.height - 80, self.window.width, 80, arcade.Vec2()
         )
         arcade.draw_rect_filled(rect, (33, 33, 33, 180))
+        color: Any
         for i in range(self.config.lives):
             if i < self.window.lives_remaining:
                 color = (250, 226, 81)
@@ -270,7 +273,7 @@ class GameView:
         )
         time.draw()
 
-    def _draw_cheat(self):
+    def _draw_cheat(self) -> None:
         txt = arcade.Text(
             "Cheat Mode",
             150,

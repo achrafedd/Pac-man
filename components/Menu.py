@@ -1,3 +1,5 @@
+from typing import Any
+
 import arcade
 import cv2
 
@@ -26,11 +28,11 @@ class MainMenu:
             "assets/pacman.png"
         )
 
-    def on_draw(self):
+    def on_draw(self) -> None:
         arcade.draw_texture_rect(self.background, self.bg_rect)
         self.draw_menu()
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:
@@ -62,7 +64,7 @@ class MainMenu:
         )
         button_text.draw()
 
-    def draw_menu(self):
+    def draw_menu(self) -> None:
         x = self.window.width // 2
         arcade.draw_rect_outline(
             arcade.XYWH(
@@ -100,7 +102,7 @@ class MainMenu:
 
 
 class PauseMenu:
-    def __init__(self, window: arcade.Window):
+    def __init__(self, window: arcade.Window) -> None:
         super().__init__()
         self.window: arcade.Window = window
         self.menu_list: dict[str, Stats] = {
@@ -114,13 +116,13 @@ class PauseMenu:
         )
         self.blur_bg()
 
-    def blur_bg(self):
-        img = cv2.imread("assets/Pausebg.png")
+    def blur_bg(self) -> None:
+        img: Any = cv2.imread("assets/Pausebg.png")
         img = cv2.GaussianBlur(img, (21, 21), 0)
         cv2.imwrite("assets/Pausebg.png", img)
         self.background = arcade.load_texture("assets/Pausebg.png")
 
-    def on_draw(self):
+    def on_draw(self) -> None:
         arcade.draw_texture_rect(
             self.background,
             arcade.rect.XYWH(
@@ -132,7 +134,7 @@ class PauseMenu:
         )
         self.draw_menu()
 
-    def draw_menu(self):
+    def draw_menu(self) -> None:
         x = self.window.width // 2
         arcade.draw_rect_outline(
             arcade.XYWH(
@@ -177,7 +179,7 @@ class PauseMenu:
             anchor_y="center",
         )
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:

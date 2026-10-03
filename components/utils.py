@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ValidationError, model_validator
+from pydantic import BaseModel, Field, model_validator
 from enum import auto, Enum
 
 
@@ -69,6 +69,8 @@ class Config(BaseModel):
                 raise ValueError("The minimum height and width is 8")
             if level["width"] > 40 or level["height"] > 40:
                 raise ValueError("The miximum height and width is 40")
+        if len(self.levels) < 10:
+            raise ValueError("The minimum levels is 10")
 
         return self
 
@@ -76,18 +78,3 @@ class Config(BaseModel):
 class LeaderBoardSchema(BaseModel):
     name: str = Field(..., max_length=10)
     score: int = Field(..., ge=0)
-
-
-if __name__ == "__main__":
-    try:
-        data = {
-            "highscore_filename": "hello.json",
-            "lives": 10,
-            "levels": [{"width": 40, "height": 10}],
-            "level_max_time": 90,
-        }
-        config = Config(**data)
-        print(config)
-    except ValidationError as e:
-        for err in e.errors():
-            print(err["msg"])

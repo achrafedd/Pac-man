@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import arcade
 
@@ -96,7 +97,7 @@ class GameOver:
         )
         try:
             with open(self.file) as file:
-                res: list[LeaderBoardSchema] = json.load(file)
+                res: Any = json.load(file)
         except BaseException:
             res = []
         res.append(data.model_dump())
