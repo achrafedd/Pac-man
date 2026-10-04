@@ -43,42 +43,42 @@ class Instructions:
             arcade.color.WHITE,
         )
         self._draw_text(
-            "EAT :",
+            "PAUSE :",
             self.window.width // 2 - 450,
             self.window.height // 2 + 200,
             18,
             arcade.color.YELLOW,
         )
         self._draw_text(
-            "COLLECT ALL GUMS",
+            "PRESS ESC TO PAUSE",
             self.window.width // 2 - 250,
             self.window.height // 2 + 200,
             18,
             arcade.color.WHITE,
         )
         self._draw_text(
-            "POWER UP :",
+            "MAIN MENU:",
             self.window.width // 2 - 450,
             self.window.height // 2 + 100,
             18,
             arcade.color.YELLOW,
         )
         self._draw_text(
-            "COLLECT SUPER GUMS",
+            "PRESS M TO GO TO MAIN MENU",
             self.window.width // 2 - 200,
             self.window.height // 2 + 100,
             18,
             arcade.color.WHITE,
         )
         self._draw_text(
-            "GHOSTS :",
+            "EXIT :",
             self.window.width // 2 - 450,
             self.window.height // 2,
             18,
             arcade.color.YELLOW,
         )
         self._draw_text(
-            "EAT SCARED (BLUE) GHOSTS",
+            "PRESS Q TO QUIT",
             self.window.width // 2 - 250,
             self.window.height // 2,
             18,
