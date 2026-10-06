@@ -8,6 +8,8 @@ from .utils import Config
 
 
 class Direction(Enum):
+    """Represent direction behavior.
+    """
     NORTH = 1
     EAST = 2
     SOUTH = 4
@@ -15,6 +17,8 @@ class Direction(Enum):
 
 
 class Maze:
+    """Represent maze behavior.
+    """
     def __init__(
         self,
         width: int,
@@ -24,6 +28,16 @@ class Maze:
         window_width: int,
         window_height: int,
     ) -> None:
+        """Initialize the object.
+
+        Args:
+            width (int): Value used by the operation.
+            height (int): Value used by the operation.
+            config (Config): Value used by the operation.
+            seed (int): Value used by the operation.
+            window_width (int): Value used by the operation.
+            window_height (int): Value used by the operation.
+        """
         self.maze: Any = []
         self.config: Config = config
         self.gums: list[list[int]]
@@ -39,6 +53,8 @@ class Maze:
         )
 
     def init_gums(self) -> None:
+        """Perform the init gums operation.
+        """
         self.gums = [[0] * self.width for _ in range(self.height)]
         for r_idx, row in enumerate(self.maze):
             for c_idx, col in enumerate(row):
@@ -62,15 +78,35 @@ class Maze:
                     self.gums[r_idx][c_idx] = self.config.points_per_pacgum
 
     def init_maze(self) -> None:
+        """Perform the init maze operation.
+        """
         maze = MazeGenerator((self.width, self.height), False)
         maze.generate(self.seed)
         self.maze = maze.maze
 
     @staticmethod
     def is_open(cell_value: int, direction: Direction) -> bool:
+        """Perform the is open operation.
+
+        Args:
+            cell_value (int): Value used by the operation.
+            direction (Direction): Value used by the operation.
+
+        Returns:
+            bool: The operation result.
+        """
         return cell_value & direction.value != 0
 
     def get_neighbor(self, x: int, y: int) -> list[tuple[int, int]]:
+        """Perform the get neighbor operation.
+
+        Args:
+            x (int): Value used by the operation.
+            y (int): Value used by the operation.
+
+        Returns:
+            list[tuple[int, int]]: The operation result.
+        """
         cell: int = self.maze[y][x]
         neighbors = []
         if not cell >> 0 & 1 and y > 0:
@@ -86,6 +122,16 @@ class Maze:
     def grid_to_pixel(
         self, col: int, row: int, tile_size: float
     ) -> tuple[float, float]:
+        """Perform the grid to pixel operation.
+
+        Args:
+            col (int): Value used by the operation.
+            row (int): Value used by the operation.
+            tile_size (float): Value used by the operation.
+
+        Returns:
+            tuple[float, float]: The operation result.
+        """
         margin_x: float = tile_size * (len(self.maze[0]) // 2)
         margin_y: float = tile_size * (len(self.maze) // 2)
         x: float = self.cx + col * tile_size - margin_x
@@ -93,6 +139,13 @@ class Maze:
         return x, y
 
     def draw_cell(self, row_idx: int, col_idx: int, col: int) -> None:
+        """Perform the draw cell operation.
+
+        Args:
+            row_idx (int): Value used by the operation.
+            col_idx (int): Value used by the operation.
+            col (int): Value used by the operation.
+        """
         half = self.size // 2
         x, y = self.grid_to_pixel(col_idx, row_idx, self.size)
         rect = arcade.XYWH(x, y, self.size, self.size)
@@ -134,6 +187,8 @@ class Maze:
             )
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         for row_idx, row in enumerate(self.maze):
             for col_idx, col in enumerate(row):
                 self.draw_cell(row_idx, col_idx, col)

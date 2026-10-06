@@ -7,6 +7,8 @@ from .Maze import Maze
 
 
 class Direction(Enum):
+    """Represent direction behavior.
+    """
     RIGHT = "right"
     LEFT = "left"
     DOWN = "down"
@@ -14,6 +16,8 @@ class Direction(Enum):
 
 
 class Player:
+    """Represent player behavior.
+    """
     def __init__(
         self,
         cordinates: tuple[int, int],
@@ -21,8 +25,18 @@ class Player:
         window: arcade.Window,
         direction: Direction = Direction.RIGHT,
     ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            window (arcade.Window): Value used by the operation.
+            direction (Direction): Value used by the operation.
+        """
         self.dir: int = 1
         self.d: float = 1
+        self.ox: int = cordinates[0]
+        self.oy: int = cordinates[1]
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
         self.maze: Maze = maze
@@ -45,6 +59,8 @@ class Player:
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         if self.pixel_x == self.target_x and self.pixel_y == self.target_y:
             self.window.score += self.maze.gums[self.y][self.x]
             self.maze.gums[self.y][self.x] = 0
@@ -61,18 +77,32 @@ class Player:
         )
 
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         self.direction = Direction.RIGHT
-        self.x, self.y = (3, 3)
+        self.x, self.y = self.ox, self.oy
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
-            3, 3, self.maze.size
+            self.ox, self.oy, self.maze.size
         )
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def can_move(self, x: float, y: float, direction: Direction) -> bool:
+        """Perform the can move operation.
+
+        Args:
+            x (float): Value used by the operation.
+            y (float): Value used by the operation.
+            direction (Direction): Value used by the operation.
+
+        Returns:
+            bool: The operation result.
+        """
         mask, _, _, _, _ = self.directions[direction.value]
         return not self.maze.maze[y][x] & mask
 
     def move(self) -> None:
+        """Perform the move operation.
+        """
         mask, dx, dy, _, _ = self.directions[self.direction.value]
         if self.can_move(self.x, self.y, self.direction):
             self.x += dx
@@ -82,6 +112,11 @@ class Player:
             )
 
     def update(self, delta_time: float) -> None:
+        """Perform the update operation.
+
+        Args:
+            delta_time (float): Value used by the operation.
+        """
         if self.next_direction != self.direction and self.can_move(
             self.x, self.y, self.next_direction
         ):

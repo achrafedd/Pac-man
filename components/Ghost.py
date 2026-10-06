@@ -8,12 +8,22 @@ import random
 
 
 class Ghost(ABC):
+    """Represent ghost behavior.
+    """
     def __init__(
         self, cordinates: tuple[int, int],
         maze: Maze,
         color: Color,
         player: Player
     ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            color (Color): Value used by the operation.
+            player (Player): Value used by the operation.
+        """
         self.x: int = cordinates[0]
         self.y: int = cordinates[1]
         self.color: Color = color
@@ -32,9 +42,16 @@ class Ghost(ABC):
 
     @abstractmethod
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         pass
 
     def update(self, delta_time: float) -> None:
+        """Perform the update operation.
+
+        Args:
+            delta_time (float): Value used by the operation.
+        """
         if self.eated_time > 0:
             self.eated_time -= delta_time
             return
@@ -65,12 +82,22 @@ class Ghost(ABC):
             self.pixel_y += dy / distance * step
 
     def _distance(self, player: Player) -> Any:
+        """Perform the distance operation.
+
+        Args:
+            player (Player): Value used by the operation.
+
+        Returns:
+            Any: The operation result.
+        """
         return (
             (self.pixel_x - player.pixel_x) ** 2
             + (self.pixel_y - player.pixel_y) ** 2
         ) ** (1 / 2)
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         if self.eated_time > 0:
             return
         if self._distance(self.player) <= 30 and not self.player.cheat_mode:
@@ -90,37 +117,36 @@ class Ghost(ABC):
         body = arcade.XYWH(x, y - height // 2, self.size, height)
         arcade.draw_rect_filled(body, self.color)
 
-        # Draw ayse yarbi tkon katkteb haka xD
-        ayse_size = self.size * 0.2
+        eyes_size = self.size * 0.2
         black_size = self.size * 0.1
-        ayse_gap = self.size * 0.25
+        eyes_gap = self.size * 0.25
         if self.fear:
             arcade.draw_circle_filled(
-                x + ayse_gap, y, ayse_size, (255, 255, 0)
+                x + eyes_gap, y, eyes_size, (255, 255, 0)
             )
             arcade.draw_circle_filled(
-                x - ayse_gap, y, ayse_size, (255, 255, 0)
+                x - eyes_gap, y, eyes_size, (255, 255, 0)
             )
         else:
             arcade.draw_circle_filled(
-                x + ayse_gap, y, ayse_size, (255, 255, 255)
+                x + eyes_gap, y, eyes_size, (255, 255, 255)
             )
-            arcade.draw_circle_filled(x + ayse_gap, y, black_size, (0, 0, 0))
+            arcade.draw_circle_filled(x + eyes_gap, y, black_size, (0, 0, 0))
             arcade.draw_circle_filled(
-                x - ayse_gap, y, ayse_size, (255, 255, 255)
+                x - eyes_gap, y, eyes_size, (255, 255, 255)
             )
-            arcade.draw_circle_filled(x - ayse_gap, y, black_size, (0, 0, 0))
+            arcade.draw_circle_filled(x - eyes_gap, y, black_size, (0, 0, 0))
 
         # Draw mouth
         if self.fear:
             arcade.draw_arc_outline(
-                x - 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+                x - 10, y - eyes_gap, 10, 10, (255, 255, 255), 0, 180
             )
             arcade.draw_arc_outline(
-                x, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+                x, y - eyes_gap, 10, 10, (255, 255, 255), 0, 180
             )
             arcade.draw_arc_outline(
-                x + 10, y - ayse_gap, 10, 10, (255, 255, 255), 0, 180
+                x + 10, y - eyes_gap, 10, 10, (255, 255, 255), 0, 180
             )
 
         # Draw leges
@@ -148,6 +174,14 @@ class Ghost(ABC):
         )
 
     def shortest_distance(self, start: Tuple[int, int]) -> Any:
+        """Perform the shortest distance operation.
+
+        Args:
+            start (Tuple[int, int]): Value used by the operation.
+
+        Returns:
+            Any: The operation result.
+        """
         queue = [start]
         end = (self.player.y, self.player.x)
         vis = {start}
@@ -175,6 +209,8 @@ class Ghost(ABC):
         return len(path)
 
     def fear_mode(self) -> None:
+        """Perform the fear mode operation.
+        """
         neighbor = self.maze.get_neighbor(self.x, self.y)
 
         best_distance = -1
@@ -194,19 +230,33 @@ class Ghost(ABC):
 
     @abstractmethod
     def move(self) -> None:
+        """Perform the move operation.
+        """
         pass
 
 
 class Red_Ghost(Ghost):
+    """Represent red ghost behavior.
+    """
     def __init__(
             self, cordinates: Tuple[int, int],
             maze: Maze,
             color: Color,
             player: Player
             ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (Tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            color (Color): Value used by the operation.
+            player (Player): Value used by the operation.
+        """
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         self.fear = False
         self.x, self.y = (0, 0)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
@@ -215,6 +265,11 @@ class Red_Ghost(Ghost):
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def get_path(self) -> Any:
+        """Perform the get path operation.
+
+        Returns:
+            Any: The operation result.
+        """
         x_player = self.player.x
         y_player = self.player.y
         x_ghost = self.x
@@ -248,6 +303,8 @@ class Red_Ghost(Ghost):
         return path
 
     def move(self) -> None:
+        """Perform the move operation.
+        """
         path = self.get_path()
         if len(path) < 2:
             return
@@ -258,6 +315,8 @@ class Red_Ghost(Ghost):
 
 
 class Pink_Ghost(Ghost):
+    """Represent pink ghost behavior.
+    """
     def __init__(
             self,
             cordinates: Tuple[int, int],
@@ -265,9 +324,19 @@ class Pink_Ghost(Ghost):
             color: Color,
             player: Player
             ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (Tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            color (Color): Value used by the operation.
+            player (Player): Value used by the operation.
+        """
         super().__init__(cordinates, maze, color, player)
 
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         self.fear = False
         self.x, self.y = (self.maze.width - 1, 0)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
@@ -276,9 +345,16 @@ class Pink_Ghost(Ghost):
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         return super().draw()
 
     def get_path(self) -> Any:
+        """Perform the get path operation.
+
+        Returns:
+            Any: The operation result.
+        """
         x_player = self.player.x
         y_player = self.player.y
         x_ghost = self.x
@@ -318,6 +394,8 @@ class Pink_Ghost(Ghost):
         return path
 
     def move(self) -> None:
+        """Perform the move operation.
+        """
         path = self.get_path()
         if len(path) < 2:
             return
@@ -328,6 +406,8 @@ class Pink_Ghost(Ghost):
 
 
 class Orange_Ghost(Ghost):
+    """Represent orange ghost behavior.
+    """
     def __init__(
             self,
             cordinates: Tuple[int, int],
@@ -335,10 +415,20 @@ class Orange_Ghost(Ghost):
             color: Color,
             player: Player
             ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (Tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            color (Color): Value used by the operation.
+            player (Player): Value used by the operation.
+        """
         super().__init__(cordinates, maze, color, player)
         self.raduis = 5
 
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         self.fear = False
         self.x, self.y = (0, self.maze.height - 1)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
@@ -347,9 +437,19 @@ class Orange_Ghost(Ghost):
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         return super().draw()
 
     def get_path(self, goal: tuple[int, int]) -> Any:
+        """Perform the get path operation.
+
+        Args:
+            goal (tuple[int, int]): Value used by the operation.
+
+        Returns:
+            Any: The operation result.
+        """
         x_ghost = self.x
         y_ghost = self.y
         start = (y_ghost, x_ghost)
@@ -379,6 +479,8 @@ class Orange_Ghost(Ghost):
         return path
 
     def move(self) -> None:
+        """Perform the move operation.
+        """
         if (self.x - self.player.x) ** 2 + (
             self.y - self.player.y
         ) ** 2 <= self.raduis**2:
@@ -398,6 +500,8 @@ class Orange_Ghost(Ghost):
 
 
 class Blue_Ghost(Ghost):
+    """Represent blue ghost behavior.
+    """
     def __init__(
             self,
             cordinates: Tuple[int, int],
@@ -406,10 +510,21 @@ class Blue_Ghost(Ghost):
             player: Player,
             red_ghost: Red_Ghost
             ) -> None:
+        """Initialize the object.
+
+        Args:
+            cordinates (Tuple[int, int]): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            color (Color): Value used by the operation.
+            player (Player): Value used by the operation.
+            red_ghost (Red_Ghost): Value used by the operation.
+        """
         super().__init__(cordinates, maze, color, player)
         self.red_ghost = red_ghost
 
     def _restart(self) -> None:
+        """Perform the restart operation.
+        """
         self.fear = False
         self.x, self.y = (self.maze.height - 1, self.maze.height - 1)
         self.pixel_x, self.pixel_y = self.maze.grid_to_pixel(
@@ -418,9 +533,19 @@ class Blue_Ghost(Ghost):
         self.target_x, self.target_y = self.pixel_x, self.pixel_y
 
     def draw(self) -> None:
+        """Perform the draw operation.
+        """
         return super().draw()
 
     def get_path(self, goal: tuple[int, int]) -> Any:
+        """Perform the get path operation.
+
+        Args:
+            goal (tuple[int, int]): Value used by the operation.
+
+        Returns:
+            Any: The operation result.
+        """
         x_ghost = self.x
         y_ghost = self.y
         start = (y_ghost, x_ghost)
@@ -450,6 +575,8 @@ class Blue_Ghost(Ghost):
         return path
 
     def move(self) -> None:
+        """Perform the move operation.
+        """
         if self.player.dir == 1:  # right
             ahead = (self.player.y, (self.player.x + 2) % self.maze.width)
         elif self.player.dir == 2:  # down

@@ -4,7 +4,14 @@ from components.utils import Stats
 
 
 class Instructions:
+    """Represent instructions behavior.
+    """
     def __init__(self, window: arcade.Window) -> None:
+        """Initialize the object.
+
+        Args:
+            window (arcade.Window): Value used by the operation.
+        """
         self.window: arcade.Window = window
         self.bg: arcade.Texture = arcade.load_texture("assets/background.jpeg")
         self.bg_rect: arcade.Rect = arcade.XYWH(
@@ -12,6 +19,8 @@ class Instructions:
         )
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         rect = arcade.XYWH(
             self.window.width // 2,
@@ -121,6 +130,12 @@ class Instructions:
         )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.M:
             self.window.stat = Stats.MAIN_MENU
         elif symbol == arcade.key.Q:
@@ -134,6 +149,15 @@ class Instructions:
         size: int,
         color: arcade.types.Color,
     ) -> None:
+        """Perform the draw text operation.
+
+        Args:
+            text (str): Value used by the operation.
+            x (float): Value used by the operation.
+            y (float): Value used by the operation.
+            size (int): Value used by the operation.
+            color (arcade.types.Color): Value used by the operation.
+        """
         obj = arcade.Text(
             text,
             x,

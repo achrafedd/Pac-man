@@ -3,6 +3,8 @@ from enum import auto, Enum
 
 
 class Stats(Enum):
+    """Represent stats behavior.
+    """
     MAIN_MENU = auto()
     LEADERBOARD = auto()
     GAME_VIEW = auto()
@@ -14,6 +16,8 @@ class Stats(Enum):
 
 
 class Config(BaseModel):
+    """Represent config behavior.
+    """
     highscore_filename: str = "leaderboard.json"
     levels: list[dict[str, int]] = [{"width": 42, "height": 42}]
     lives: int = 3
@@ -25,6 +29,11 @@ class Config(BaseModel):
 
     @model_validator(mode="after")
     def validate_filename(self) -> "Config":
+        """Perform the validate filename operation.
+
+        Returns:
+            'Config': The operation result.
+        """
         if not self.highscore_filename.endswith(".json"):
             raise ValueError("The highscore_filename must be JSON file")
         if self.highscore_filename.find("/") != -1:
@@ -76,5 +85,7 @@ class Config(BaseModel):
 
 
 class LeaderBoardSchema(BaseModel):
+    """Represent leaderboardschema behavior.
+    """
     name: str = Field(..., max_length=10)
     score: int = Field(..., ge=0)

@@ -10,6 +10,8 @@ from .utils import Config, Stats
 
 
 class GameView:
+    """Represent gameview behavior.
+    """
     def __init__(
         self,
         config: Config,
@@ -17,6 +19,14 @@ class GameView:
         main_menu: MainMenu,
         window: arcade.Window,
     ) -> None:
+        """Initialize the object.
+
+        Args:
+            config (Config): Value used by the operation.
+            maze (Maze): Value used by the operation.
+            main_menu (MainMenu): Value used by the operation.
+            window (arcade.Window): Value used by the operation.
+        """
         super().__init__()
         self.maze: Maze = maze
         self.main_menu: MainMenu = main_menu
@@ -26,7 +36,11 @@ class GameView:
         self.restart: bool = True
         self.isCounting: bool = True
         self.counter: float = 3
-        self.player: Player = Player((3, 3), self.maze, window)
+        self.player: Player = Player(
+            self._take_player_cords(),
+            self.maze,
+            window
+        )
         self.left_top_flag: bool = True
         self.right_top_flag: bool = True
         self.left_down_flag: bool = True
@@ -59,6 +73,8 @@ class GameView:
         )
 
     def _init_game(self) -> None:
+        """Perform the init game operation.
+        """
         self.time = self.config.level_max_time
         self.isCounting = True
         self.restart = True
@@ -75,12 +91,26 @@ class GameView:
         self.player._restart()
 
     def _distance(self, player: Player, ghost: Ghost) -> Any:
+        """Perform the distance operation.
+
+        Args:
+            player (Player): Value used by the operation.
+            ghost (Ghost): Value used by the operation.
+
+        Returns:
+            Any: The operation result.
+        """
         return (
             (ghost.pixel_x - player.pixel_x) ** 2
             + (ghost.pixel_y - player.pixel_y) ** 2
         ) ** (1 / 2)
 
     def game_over(self) -> bool:
+        """Perform the game over operation.
+
+        Returns:
+            bool: The operation result.
+        """
         if self.super_power or self.player.cheat_mode:
             return False
         if self._distance(self.player, self.ghost_red) <= 30:
@@ -94,6 +124,8 @@ class GameView:
         return False
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         self.maze.draw()
         self.player.draw()
@@ -117,6 +149,11 @@ class GameView:
             counter.draw()
 
     def counting(self, delta_time: float) -> None:
+        """Perform the counting operation.
+
+        Args:
+            delta_time (float): Value used by the operation.
+        """
         self.counter -= delta_time
         if self.counter < 0:
             self.isCounting = False
@@ -124,6 +161,8 @@ class GameView:
             self.counter = 3
 
     def super_gum(self) -> None:
+        """Perform the super gum operation.
+        """
         if self.maze.gums[0][0] == 0 and self.left_top_flag:
             self.run_time = 6
             self.left_top_flag = False
@@ -166,6 +205,11 @@ class GameView:
             self.ghost_pink.fear = True
 
     def on_update(self, delta_time: float) -> None:
+        """Perform the on update operation.
+
+        Args:
+            delta_time (float): Value used by the operation.
+        """
         if self.isCounting:
             self.counting(delta_time)
             return
@@ -204,6 +248,12 @@ class GameView:
                 self.run_time = 6
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.Q:
             self.window.close()
         if symbol == arcade.key.ESCAPE:
@@ -229,6 +279,8 @@ class GameView:
             self.player.cheat_mode = not self.player.cheat_mode
 
     def _draw_hud(self) -> None:
+        """Perform the draw hud operation.
+        """
         rect = arcade.XYWH(
             0, self.window.height - 80, self.window.width, 80, arcade.Vec2()
         )
@@ -274,6 +326,8 @@ class GameView:
         time.draw()
 
     def _draw_cheat(self) -> None:
+        """Perform the draw cheat operation.
+        """
         txt = arcade.Text(
             "Cheat Mode",
             150,
@@ -285,3 +339,14 @@ class GameView:
             font_size=14,
         )
         txt.draw()
+
+    def _take_player_cords(self) -> tuple[int, int]:
+        """ Take Player cordinates for every map
+        """
+        y = self.maze.height // 2
+        x = self.maze.width // 2
+        if (self.maze.maze[y][x] == 15 and self.maze.maze[y][x - 2] == 15):
+            x -= 1
+        elif (self.maze.maze[y][x] == 15 and self.maze.maze[y][x + 2] == 15):
+            x += 1
+        return (x, y)

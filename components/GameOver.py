@@ -7,7 +7,16 @@ from .utils import LeaderBoardSchema, Stats
 
 
 class GameOver:
+    """Represent gameover behavior.
+    """
     def __init__(self, file: str, score: int, window: arcade.Window) -> None:
+        """Initialize the object.
+
+        Args:
+            file (str): Value used by the operation.
+            score (int): Value used by the operation.
+            window (arcade.Window): Value used by the operation.
+        """
         self.user_name: str = ""
         self.file: str = file
         self.score: int = score
@@ -19,6 +28,8 @@ class GameOver:
         )
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         rect = arcade.XYWH(
             self.window.width // 2,
@@ -77,6 +88,12 @@ class GameOver:
         name.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.ESCAPE:
             self.window.close()
         if len(self.name) < 10:
@@ -92,6 +109,8 @@ class GameOver:
             self._save_score()
 
     def _save_score(self) -> None:
+        """Perform the save score operation.
+        """
         data: LeaderBoardSchema = LeaderBoardSchema(
             name=self.name, score=self.score
         )

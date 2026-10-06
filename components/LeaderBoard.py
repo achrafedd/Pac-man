@@ -7,7 +7,15 @@ from .utils import LeaderBoardSchema, Stats
 
 
 class LeaderBoard:
+    """Represent leaderboard behavior.
+    """
     def __init__(self, file: str, window: arcade.Window) -> None:
+        """Initialize the object.
+
+        Args:
+            file (str): Value used by the operation.
+            window (arcade.Window): Value used by the operation.
+        """
         super().__init__()
         self.window: arcade.Window = window
         self.file: str = file
@@ -23,6 +31,11 @@ class LeaderBoard:
         )
 
     def readfile(self) -> Any | None:
+        """Perform the readfile operation.
+
+        Returns:
+            Any | None: The operation result.
+        """
         data: Any = {}
         try:
             with open(self.file) as file:
@@ -42,6 +55,15 @@ class LeaderBoard:
             name: str,
             score: int
             ) -> None:
+        """Perform the score row operation.
+
+        Args:
+            x (float): Value used by the operation.
+            y (float): Value used by the operation.
+            rank (int): Value used by the operation.
+            name (str): Value used by the operation.
+            score (int): Value used by the operation.
+        """
         rect = arcade.XYWH(x - 300, y, 50, 50)
         if rank == 1:
             arcade.draw_texture_rect(self.crown, rect)
@@ -85,6 +107,8 @@ class LeaderBoard:
         score_text.draw()
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         rect = arcade.XYWH(
             self.window.width // 2,
@@ -132,6 +156,12 @@ class LeaderBoard:
             )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.DOWN:

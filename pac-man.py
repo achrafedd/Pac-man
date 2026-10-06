@@ -13,7 +13,15 @@ from components import Instructions
 
 
 class Pacman(arcade.Window):
+    """Represent pacman behavior.
+    """
     def __init__(self, config: Config, fullscreen: bool = False) -> None:
+        """Initialize the object.
+
+        Args:
+            config (Config): Value used by the operation.
+            fullscreen (bool): Value used by the operation.
+        """
         super().__init__(fullscreen=fullscreen)
         self.con: Config = config
         self.menu: MainMenu = MainMenu(self)
@@ -54,11 +62,18 @@ class Pacman(arcade.Window):
         self.stat: Stats = Stats.MAIN_MENU
 
     def on_update(self, delta_time: float) -> None:
+        """Perform the on update operation.
+
+        Args:
+            delta_time (float): Value used by the operation.
+        """
         if self.stat == Stats.GAME_VIEW:
             self.games[self.current_level - 1].on_update(delta_time)
             self._skip_level()
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         self.clear()
         if self.stat == Stats.MAIN_MENU:
             self.lives_remaining = self.con.lives
@@ -87,6 +102,12 @@ class Pacman(arcade.Window):
             self.close()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if self.stat == Stats.MAIN_MENU:
             self.menu.on_key_press(symbol, modifiers)
         elif self.stat == Stats.GAME_VIEW:
@@ -103,6 +124,8 @@ class Pacman(arcade.Window):
             self.victory.on_key_press(symbol, modifiers)
 
     def _skip_level(self) -> None:
+        """Perform the skip level operation.
+        """
         if (
             not any(
                 any(row) for row in self.mazes[self.current_level - 1].gums

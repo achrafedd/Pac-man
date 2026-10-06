@@ -7,7 +7,14 @@ from .utils import Stats
 
 
 class MainMenu:
+    """Represent mainmenu behavior.
+    """
     def __init__(self, window: arcade.Window):
+        """Initialize the object.
+
+        Args:
+            window (arcade.Window): Value used by the operation.
+        """
         super().__init__()
         self.menu_list: dict[str, Stats] = {
             "start game": Stats.GAME_VIEW,
@@ -29,10 +36,18 @@ class MainMenu:
         )
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(self.background, self.bg_rect)
         self.draw_menu()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:
@@ -49,6 +64,13 @@ class MainMenu:
                 self.window.close()
 
     def button(self, x: float, y: float, text: str) -> None:
+        """Perform the button operation.
+
+        Args:
+            x (float): Value used by the operation.
+            y (float): Value used by the operation.
+            text (str): Value used by the operation.
+        """
         button = arcade.XYWH(x, y, 200, 80)
         arcade.draw_rect_filled(button, arcade.color.DARK_BLUE)
         arcade.draw_rect_outline(button, arcade.color.CYAN)
@@ -65,6 +87,8 @@ class MainMenu:
         button_text.draw()
 
     def draw_menu(self) -> None:
+        """Perform the draw menu operation.
+        """
         x = self.window.width // 2
         arcade.draw_rect_outline(
             arcade.XYWH(
@@ -102,7 +126,14 @@ class MainMenu:
 
 
 class PauseMenu:
+    """Represent pausemenu behavior.
+    """
     def __init__(self, window: arcade.Window) -> None:
+        """Initialize the object.
+
+        Args:
+            window (arcade.Window): Value used by the operation.
+        """
         super().__init__()
         self.window: arcade.Window = window
         self.menu_list: dict[str, Stats] = {
@@ -117,12 +148,16 @@ class PauseMenu:
         self.blur_bg()
 
     def blur_bg(self) -> None:
+        """Perform the blur bg operation.
+        """
         img: Any = cv2.imread("assets/Pausebg.png")
         img = cv2.GaussianBlur(img, (21, 21), 0)
         cv2.imwrite("assets/Pausebg.png", img)
         self.background = arcade.load_texture("assets/Pausebg.png")
 
     def on_draw(self) -> None:
+        """Perform the on draw operation.
+        """
         arcade.draw_texture_rect(
             self.background,
             arcade.rect.XYWH(
@@ -135,6 +170,8 @@ class PauseMenu:
         self.draw_menu()
 
     def draw_menu(self) -> None:
+        """Perform the draw menu operation.
+        """
         x = self.window.width // 2
         arcade.draw_rect_outline(
             arcade.XYWH(
@@ -165,6 +202,13 @@ class PauseMenu:
         arcade.draw_texture_rect(self.selector, selector_rect)
 
     def button(self, x: float, y: float, text: str) -> None:
+        """Perform the button operation.
+
+        Args:
+            x (float): Value used by the operation.
+            y (float): Value used by the operation.
+            text (str): Value used by the operation.
+        """
         button = arcade.XYWH(x, y, 200, 80)
         arcade.draw_rect_filled(button, arcade.color.DARK_BLUE)
         arcade.draw_rect_outline(button, arcade.color.CYAN)
@@ -180,6 +224,12 @@ class PauseMenu:
         )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """Perform the on key press operation.
+
+        Args:
+            symbol (int): Value used by the operation.
+            modifiers (int): Value used by the operation.
+        """
         if symbol == arcade.key.Q:
             self.window.close()
         elif symbol == arcade.key.MOTION_DOWN or symbol == arcade.key.J:
