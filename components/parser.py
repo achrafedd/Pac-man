@@ -1,16 +1,16 @@
-import sys
 import json
+import sys
 from typing import Any
+
 from .errors import Parsing
 from .utils import Config
 
 
 class Parser:
-    """Represent parser behavior.
-    """
+    """Represent parser behavior."""
+
     def __init__(self) -> None:
-        """Initialize the object.
-        """
+        """Initialize the object."""
         file = self.take_arges()
         data = self.check_file(file)
         config = self.parse_json(data)

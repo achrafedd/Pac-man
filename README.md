@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by niboutta, aeddiba.*
+_This project has been created as part of the 42 curriculum by niboutta, aeddiba._
 
 # Pac-Man
 
@@ -41,13 +41,13 @@ make run
 
 Other Makefile commands are:
 
-| Command | Purpose |
-| --- | --- |
-| `make install` | Install or synchronize dependencies with `uv` |
-| `make run` | Start the game with `config.json` |
-| `make lint` | Run Flake8 and mypy checks |
-| `make clean` | Remove Python caches and mypy artifacts |
-| `bash package.sh` | Build a PyInstaller distribution archive |
+| Command           | Purpose                                       |
+| ----------------- | --------------------------------------------- |
+| `make install`    | Install or synchronize dependencies with `uv` |
+| `make run`        | Start the game with `config.json`             |
+| `make lint`       | Run Flake8 and mypy checks                    |
+| `make clean`      | Remove Python caches and mypy artifacts       |
+| `bash package.sh` | Build a PyInstaller distribution archive      |
 
 ### Controls
 
@@ -66,16 +66,16 @@ The configuration file is JSON and may contain comment lines beginning with
 `#`. Unknown keys are ignored by the configuration model. The supplied
 `config.json` uses the following keys:
 
-| Key | Type | Default | Description |
-| --- | --- | ---: | --- |
-| `highscore_filename` | string | `"leaderboard.json"` | JSON file used for persistent scores |
-| `levels` | list of objects | `[{"width": 42, "height": 42}]` | Maze dimensions for each level |
-| `lives` | integer | `3` | Number of lives at the start of a game |
-| `points_per_pacgum` | integer | `10` | Points for eating a normal pacgum |
-| `points_per_super_pacgum` | integer | `50` | Points for eating a power pellet |
-| `points_per_ghost` | integer | `200` | Points for eating an edible ghost |
-| `level_max_time` | integer | `90` | Time limit for a level, in seconds |
-| `seed` | integer | `42` | Seed used when creating the mazes |
+| Key                       | Type            |                         Default | Description                            |
+| ------------------------- | --------------- | ------------------------------: | -------------------------------------- |
+| `highscore_filename`      | string          |            `"leaderboard.json"` | JSON file used for persistent scores   |
+| `levels`                  | list of objects | `[{"width": 42, "height": 42}]` | Maze dimensions for each level         |
+| `lives`                   | integer         |                             `3` | Number of lives at the start of a game |
+| `points_per_pacgum`       | integer         |                            `10` | Points for eating a normal pacgum      |
+| `points_per_super_pacgum` | integer         |                            `50` | Points for eating a power pellet       |
+| `points_per_ghost`        | integer         |                           `200` | Points for eating an edible ghost      |
+| `level_max_time`          | integer         |                            `90` | Time limit for a level, in seconds     |
+| `seed`                    | integer         |                            `42` | Seed used when creating the mazes      |
 
 Each entry in `levels` must contain `width` and `height`. The supplied game
 configuration contains ten levels, with dimensions between 10x10 and 30x20.
@@ -140,11 +140,18 @@ responsibilities:
 
 ## Project Management
 
-The repository is organized around the source package, assets, configuration,
-packaging script, and Makefile. The project was developed iteratively by
-implementing the game loop, configuration parser, maze integration, gameplay
-entities, screens, persistence, and packaging, then checking the code with
-linting and static typing tools.
+The project was developed collaboratively by **aeddiba** and **niboutta**.
+We used a Kanban board based on the GitHub Projects template to organize the
+work, track tasks through their different stages, prioritize fixes, and
+monitor progress from implementation to validation.
+
+The project-management documentation is available in the
+[`project_management/`](project_management/) directory.
+
+The work was divided into tasks covering the game loop, configuration parser,
+maze integration, gameplay entities, screens, persistence, packaging, and
+quality checks. This workflow helped us coordinate contributions and review
+completed work before moving tasks to the next stage.
 
 ## Resources and AI Usage
 

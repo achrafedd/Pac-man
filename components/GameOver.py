@@ -7,8 +7,8 @@ from .utils import LeaderBoardSchema, Stats
 
 
 class GameOver:
-    """Represent gameover behavior.
-    """
+    """Represent gameover behavior."""
+
     def __init__(self, file: str, score: int, window: arcade.Window) -> None:
         """Initialize the object.
 
@@ -28,8 +28,7 @@ class GameOver:
         )
 
     def on_draw(self) -> None:
-        """Perform the on draw operation.
-        """
+        """Perform the on draw operation."""
         arcade.draw_texture_rect(self.bg, self.bg_rect)
         rect = arcade.XYWH(
             self.window.width // 2,
@@ -109,8 +108,9 @@ class GameOver:
             self._save_score()
 
     def _save_score(self) -> None:
-        """Perform the save score operation.
-        """
+        """Perform the save score operation."""
+        if self.name == "":
+            return
         data: LeaderBoardSchema = LeaderBoardSchema(
             name=self.name, score=self.score
         )
