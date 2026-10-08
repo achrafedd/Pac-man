@@ -1,20 +1,26 @@
+from time import time
+
 import arcade
 from pydantic import ValidationError
 
-from components import GameOver
-from components import GameView
-from components import LeaderBoard
-from components import Maze
-from components import MainMenu, PauseMenu
-from components import Victory
-from components import Stats, Config
-from components import Parser
-from components import Instructions
+from components import (
+    Config,
+    GameOver,
+    GameView,
+    Instructions,
+    LeaderBoard,
+    MainMenu,
+    Maze,
+    Parser,
+    PauseMenu,
+    Stats,
+    Victory,
+)
 
 
 class Pacman(arcade.Window):
-    """Represent pacman behavior.
-    """
+    """Represent pacman behavior."""
+
     def __init__(self, config: Config, fullscreen: bool = False) -> None:
         """Initialize the object.
 
@@ -34,7 +40,7 @@ class Pacman(arcade.Window):
                 config.levels[i]["width"],
                 config.levels[i]["height"],
                 config,
-                config.seed,
+                config.seed if i == 0 else time(),
                 self.width,
                 self.height,
             )
@@ -72,8 +78,7 @@ class Pacman(arcade.Window):
             self._skip_level()
 
     def on_draw(self) -> None:
-        """Perform the on draw operation.
-        """
+        """Perform the on draw operation."""
         self.clear()
         if self.stat == Stats.MAIN_MENU:
             self.lives_remaining = self.con.lives
@@ -124,8 +129,7 @@ class Pacman(arcade.Window):
             self.victory.on_key_press(symbol, modifiers)
 
     def _skip_level(self) -> None:
-        """Perform the skip level operation.
-        """
+        """Perform the skip level operation."""
         if (
             not any(
                 any(row) for row in self.mazes[self.current_level - 1].gums

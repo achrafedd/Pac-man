@@ -1,10 +1,11 @@
+from enum import Enum, auto
+
 from pydantic import BaseModel, Field, model_validator
-from enum import auto, Enum
 
 
 class Stats(Enum):
-    """Represent stats behavior.
-    """
+    """Represent stats behavior."""
+
     MAIN_MENU = auto()
     LEADERBOARD = auto()
     GAME_VIEW = auto()
@@ -16,10 +17,21 @@ class Stats(Enum):
 
 
 class Config(BaseModel):
-    """Represent config behavior.
-    """
+    """Represent config behavior."""
+
     highscore_filename: str = "leaderboard.json"
-    levels: list[dict[str, int]] = [{"width": 42, "height": 42}]
+    levels: list[dict[str, int]] = [
+        {"width": 10, "height": 10},
+        {"width": 15, "height": 10},
+        {"width": 20, "height": 10},
+        {"width": 15, "height": 15},
+        {"width": 20, "height": 20},
+        {"width": 25, "height": 20},
+        {"width": 35, "height": 20},
+        {"width": 30, "height": 30},
+        {"width": 35, "height": 30},
+        {"width": 42, "height": 42},
+    ]
     lives: int = 3
     points_per_pacgum: int = 10
     points_per_super_pacgum: int = 50
@@ -85,7 +97,7 @@ class Config(BaseModel):
 
 
 class LeaderBoardSchema(BaseModel):
-    """Represent leaderboardschema behavior.
-    """
+    """Represent leaderboardschema behavior."""
+
     name: str = Field(..., max_length=10)
     score: int = Field(..., ge=0)

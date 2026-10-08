@@ -8,8 +8,8 @@ from .utils import Config
 
 
 class Direction(Enum):
-    """Represent direction behavior.
-    """
+    """Represent direction behavior."""
+
     NORTH = 1
     EAST = 2
     SOUTH = 4
@@ -17,14 +17,14 @@ class Direction(Enum):
 
 
 class Maze:
-    """Represent maze behavior.
-    """
+    """Represent maze behavior."""
+
     def __init__(
         self,
         width: int,
         height: int,
         config: Config,
-        seed: int,
+        seed: float,
         window_width: int,
         window_height: int,
     ) -> None:
@@ -53,8 +53,7 @@ class Maze:
         )
 
     def init_gums(self) -> None:
-        """Perform the init gums operation.
-        """
+        """Perform the init gums operation."""
         self.gums = [[0] * self.width for _ in range(self.height)]
         for r_idx, row in enumerate(self.maze):
             for c_idx, col in enumerate(row):
@@ -78,8 +77,7 @@ class Maze:
                     self.gums[r_idx][c_idx] = self.config.points_per_pacgum
 
     def init_maze(self) -> None:
-        """Perform the init maze operation.
-        """
+        """Perform the init maze operation."""
         maze = MazeGenerator((self.width, self.height), False)
         maze.generate(self.seed)
         self.maze = maze.maze
@@ -187,8 +185,7 @@ class Maze:
             )
 
     def draw(self) -> None:
-        """Perform the draw operation.
-        """
+        """Perform the draw operation."""
         for row_idx, row in enumerate(self.maze):
             for col_idx, col in enumerate(row):
                 self.draw_cell(row_idx, col_idx, col)
