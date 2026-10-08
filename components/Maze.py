@@ -24,7 +24,7 @@ class Maze:
         width: int,
         height: int,
         config: Config,
-        seed: float,
+        seed: Any,
         window_width: int,
         window_height: int,
     ) -> None:
